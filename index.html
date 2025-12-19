@@ -86,7 +86,7 @@
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
-        /* Tapşırıqlar */
+        /* Tapşırıqlar Başlıq */
         .section-header {
             display: flex;
             align-items: center;
@@ -108,6 +108,7 @@
             font-size: 12px;
         }
 
+        /* REKLAM YERİ (Əvvəlki Orijinal Halı) */
         .task-list { display: flex; flex-direction: column; gap: 12px; }
 
         .task-item {
@@ -115,38 +116,41 @@
             justify-content: space-between;
             align-items: center;
             background: #fff;
-            padding: 15px;
-            border-radius: 20px;
-            border: 1px solid #f0f0f0;
-            transition: 0.2s;
+            padding: 18px;
+            border-radius: 25px; /* Daha yuvarlaq */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #f9f9f9;
         }
 
+        .task-main { display: flex; align-items: center; }
+
         .video-box {
-            width: 45px;
-            height: 45px;
-            background: #fff5f5;
-            color: var(--theme-red);
-            border-radius: 14px;
+            width: 50px;
+            height: 50px;
+            background: var(--theme-red); /* Qırmızı fon */
+            border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 18px;
-            margin-right: 12px;
+            color: white; /* Ağ ikon */
+            font-size: 20px;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
         }
 
-        .task-text b { display: block; font-size: 14px; color: var(--text-main); }
-        .task-text span { color: #20bf6b; font-size: 12px; font-weight: 700; }
+        .task-text b { display: block; font-size: 16px; margin-bottom: 2px; color: var(--text-main); }
+        .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
 
         .task-status {
-            background: #f8f9fa;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 12px;
+            background: #f0f2f5;
+            padding: 10px 18px;
+            border-radius: 18px;
+            font-size: 14px;
             font-weight: 800;
             color: var(--text-main);
         }
 
-        /* MARAQLI ALT MENYU */
+        /* ALT MENYU */
         .bottom-nav {
             position: fixed;
             bottom: 15px;
@@ -172,26 +176,14 @@
             align-items: center;
             color: var(--text-light);
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             flex: 1;
         }
 
-        .nav-item i {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
+        .nav-item i { font-size: 20px; margin-bottom: 5px; }
+        .nav-item span { font-size: 10px; font-weight: 600; }
 
-        .nav-item span {
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        /* Aktiv Buton Stili */
-        .nav-item.active {
-            color: var(--theme-red);
-            transform: translateY(-5px);
-        }
-
+        .nav-item.active { color: var(--theme-red); transform: translateY(-5px); }
         .nav-item.active i {
             background: #fff0f0;
             width: 42px;
@@ -201,13 +193,9 @@
             align-items: center;
             border-radius: 12px;
             font-size: 22px;
-            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.15);
         }
 
-        /* Mərkəzi "Xüsusi" Buton Effekti (Məsələn Reytinq üçün) */
-        .nav-item.special i {
-            color: #f1c40f; /* Qızılı rəng liderlər üçün */
-        }
+        .nav-item.special i { color: #f1c40f; }
 
     </style>
 </head>
@@ -230,23 +218,29 @@
         </div>
 
         <div class="section-header">
-            <div class="bolt-icon"><i class="fa-solid fa-fire-flash"></i></div>
-            Aktiv Tapşırıqlar
+            <div class="bolt-icon"><i class="fa-solid fa-bolt"></i></div>
+            Günlük Tapşırıqlar
         </div>
 
         <div class="task-list">
             <div class="task-item">
-                <div style="display: flex; align-items: center;">
-                    <div class="video-box"><i class="fa-solid fa-play"></i></div>
-                    <div class="task-text"><b>Video Reklam #1</b><span>+ 0.0005 ₼</span></div>
+                <div class="task-main">
+                    <div class="video-box"><i class="fa-solid fa-video"></i></div>
+                    <div class="task-text">
+                        <b>Reklam İzlə #1</b>
+                        <span>+ 0.0005 ₼</span>
+                    </div>
                 </div>
                 <div class="task-status">0/25</div>
             </div>
 
             <div class="task-item">
-                <div style="display: flex; align-items: center;">
-                    <div class="video-box"><i class="fa-solid fa-circle-play"></i></div>
-                    <div class="task-text"><b>Video Reklam #2</b><span>+ 0.0005 ₼</span></div>
+                <div class="task-main">
+                    <div class="video-box"><i class="fa-solid fa-video"></i></div>
+                    <div class="task-text">
+                        <b>Reklam İzlə #2</b>
+                        <span>+ 0.0005 ₼</span>
+                    </div>
                 </div>
                 <div class="task-status">0/25</div>
             </div>
@@ -257,27 +251,22 @@
                 <i class="fa-solid fa-house-chimney-window"></i>
                 <span>Ana Səhifə</span>
             </div>
-            
             <div class="nav-item">
                 <i class="fa-solid fa-list-check"></i>
                 <span>İşlər</span>
             </div>
-
             <div class="nav-item">
                 <i class="fa-solid fa-handshake-angle"></i>
                 <span>Dostlar</span>
             </div>
-
             <div class="nav-item special">
                 <i class="fa-solid fa-trophy"></i>
                 <span>Liderlər</span>
             </div>
-
             <div class="nav-item">
                 <i class="fa-solid fa-gem"></i>
                 <span>Bonus</span>
             </div>
-
             <div class="nav-item">
                 <i class="fa-solid fa-credit-card"></i>
                 <span>Cüzdan</span>
