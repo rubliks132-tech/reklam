@@ -16,6 +16,7 @@
             --bg-gray: #f8f9fd;
             --text-main: #2d3436;
             --text-light: #a0a0a0;
+            --gold: #f1c40f;
         }
 
         html, body {
@@ -24,45 +25,36 @@
             user-select: none;
             -webkit-user-select: none;
             background-color: var(--bg-gray);
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Inter', sans-serif;
         }
 
         body { display: flex; justify-content: center; }
 
         .phone-container {
-            width: 100%;
-            max-width: 400px;
-            background-color: white;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            padding-bottom: 120px; 
+            width: 100%; max-width: 400px;
+            background-color: white; min-height: 100vh;
+            padding: 20px; box-sizing: border-box;
+            position: relative; padding-bottom: 120px; 
         }
 
-        /* Profil Bölməsi */
+        /* BÖLMƏLƏRİN GİZLƏDİLMƏSİ */
+        .app-section { display: none; }
+        .app-section.active { display: block; }
+
+        /* PROFIL VƏ BALANS */
         .header-profile {
             display: flex; align-items: center; padding: 15px;
             border-radius: 20px; background: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 25px;
             border: 1px solid #f0f0f0;
         }
-
-        .avatar-wrapper {
-            width: 55px; height: 55px; border-radius: 50%;
-            border: 2px solid var(--theme-red); padding: 2px;
-            margin-right: 12px; overflow: hidden;
-        }
-
+        .avatar-wrapper { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--theme-red); padding: 2px; margin-right: 12px; overflow: hidden; }
         #user-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none; }
         .default-avatar { width: 100%; height: 100%; border-radius: 50%; background: #eee; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #ccc; }
-
         .user-meta h3 { margin: 0; font-size: 16px; color: var(--text-main); }
         .user-meta span { color: var(--theme-red); font-size: 13px; font-weight: 600; }
 
-        /* Balans */
         .balance-card {
             background: linear-gradient(135deg, #ff6b6b, var(--theme-red));
             border-radius: 25px; padding: 25px; color: white;
@@ -71,40 +63,34 @@
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
-        /* Reklamlar */
+        /* REKLAM TAPŞIRIQLARI */
         .section-header { display: flex; align-items: center; margin-bottom: 18px; font-weight: 700; }
         .bolt-icon { background: var(--theme-red); color: white; width: 26px; height: 26px; border-radius: 7px; display: flex; justify-content: center; align-items: center; margin-right: 10px; }
-        
-        .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-item { 
             display: flex; justify-content: space-between; align-items: center; 
             background: #fff; padding: 18px; border-radius: 25px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9; 
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: 0.2s; margin-bottom: 12px;
         }
-
-        /* Dondurma stili (Eyni anda baxmamaq üçün) */
-        .task-item.locked {
-            opacity: 0.5;
-            pointer-events: none;
-            filter: grayscale(0.8);
-        }
-
-        .task-item.disabled {
-            opacity: 0.6;
-            pointer-events: none;
-            filter: grayscale(1);
-        }
-
+        .task-item.locked { opacity: 0.5; pointer-events: none; filter: grayscale(0.8); }
+        .task-item.disabled { opacity: 0.6; pointer-events: none; filter: grayscale(1); }
         .video-box { width: 50px; height: 50px; background: var(--theme-red); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; margin-right: 15px; }
         .task-text b { display: block; font-size: 15px; color: var(--text-main); }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
-        
-        .task-status-container { display: flex; align-items: center; gap: 8px; }
-        .counter-text { font-size: 12px; font-weight: 700; color: var(--text-light); }
         .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; color: var(--text-main); }
 
-        /* Alt Menyu */
+        /* LİDERLƏR SİYAHISI STİLLƏRİ */
+        .leader-row {
+            display: flex; align-items: center; padding: 12px;
+            background: #fff; border-radius: 15px; margin-bottom: 8px;
+            border: 1px solid #f0f0f0;
+        }
+        .rank-num { width: 30px; font-weight: 800; color: var(--text-light); }
+        .leader-avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; }
+        .leader-info { flex: 1; font-size: 14px; font-weight: 600; }
+        .leader-bal { font-weight: 800; color: var(--theme-red); }
+
+        /* ALT MENYU */
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
@@ -112,7 +98,7 @@
             display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; cursor: pointer; }
         .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
         .nav-item.active { color: var(--theme-red); }
     </style>
@@ -120,58 +106,68 @@
 <body>
 
     <div class="phone-container">
-        <div class="header-profile">
-            <div class="avatar-wrapper">
-                <img id="user-photo" src="" alt="">
-                <div id="default-icon" class="default-avatar"><i class="fa-solid fa-user"></i></div>
+        
+        <div id="home-page" class="app-section active">
+            <div class="header-profile">
+                <div class="avatar-wrapper">
+                    <img id="user-photo" src="" alt="">
+                    <div id="default-icon" class="default-avatar"><i class="fa-solid fa-user"></i></div>
+                </div>
+                <div class="user-meta">
+                    <h3 id="user-name">Yüklənir...</h3>
+                    <span id="user-tag">@username</span>
+                </div>
             </div>
-            <div class="user-meta">
-                <h3 id="user-name">Yüklənir...</h3>
-                <span id="user-tag">@username</span>
+
+            <div class="balance-card">
+                <div class="balance-label">MÖVCUD BALANS</div>
+                <div id="balance-display" class="balance-value">0.0000 ₼</div>
+            </div>
+
+            <div class="section-header">
+                <div class="bolt-icon"><i class="fa-solid fa-bolt"></i></div>
+                Günlük Tapşırıqlar
+            </div>
+
+            <div class="task-list">
+                <div id="ad-card-1" class="task-item" onclick="handleAdClick('show_10180357', 1)">
+                    <div style="display: flex; align-items: center;">
+                        <div class="video-box"><i class="fa-solid fa-video"></i></div>
+                        <div class="task-text"><b>Reklam İzlə #1</b><span>+ 0.0005 ₼</span></div>
+                    </div>
+                    <div class="task-status-container">
+                        <span id="ad-count-1" class="counter-text">0/25</span>
+                        <div id="ad-status-1" class="task-status">İzlə</div>
+                    </div>
+                </div>
+
+                <div id="ad-card-2" class="task-item" onclick="handleAdClick('show_10198423', 2)">
+                    <div style="display: flex; align-items: center;">
+                        <div class="video-box"><i class="fa-solid fa-video"></i></div>
+                        <div class="task-text"><b>Reklam İzlə #2</b><span>+ 0.0005 ₼</span></div>
+                    </div>
+                    <div class="task-status-container">
+                        <span id="ad-count-2" class="counter-text">0/25</span>
+                        <div id="ad-status-2" class="task-status">İzlə</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="balance-card">
-            <div class="balance-label">MÖVCUD BALANS</div>
-            <div id="balance-display" class="balance-value">0.0000 ₼</div>
-        </div>
-
-        <div class="section-header">
-            <div class="bolt-icon"><i class="fa-solid fa-bolt"></i></div>
-            Günlük Tapşırıqlar
-        </div>
-
-        <div class="task-list">
-            <div id="ad-card-1" class="task-item" onclick="handleAdClick('show_10180357', 1)">
-                <div style="display: flex; align-items: center;">
-                    <div class="video-box"><i class="fa-solid fa-video"></i></div>
-                    <div class="task-text"><b>Reklam İzlə #1</b><span>+ 0.0005 ₼</span></div>
+        <div id="leader-page" class="app-section">
+            <h2 style="text-align: center; font-size: 20px; margin-bottom: 20px;">🏆 Top Liderlər</h2>
+            <div id="leader-list-container">
                 </div>
-                <div class="task-status-container">
-                    <span id="ad-count-1" class="counter-text">0/25</span>
-                    <div id="ad-status-1" class="task-status">İzlə</div>
-                </div>
-            </div>
-
-            <div id="ad-card-2" class="task-item" onclick="handleAdClick('show_10198423', 2)">
-                <div style="display: flex; align-items: center;">
-                    <div class="video-box"><i class="fa-solid fa-video"></i></div>
-                    <div class="task-text"><b>Reklam İzlə #2</b><span>+ 0.0005 ₼</span></div>
-                </div>
-                <div class="task-status-container">
-                    <span id="ad-count-2" class="counter-text">0/25</span>
-                    <div id="ad-status-2" class="task-status">İzlə</div>
-                </div>
-            </div>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
+            <div class="nav-item active" onclick="navigateTo('home-page')"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
             <div class="nav-item"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
             <div class="nav-item"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
-            <div class="nav-item special"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
+            <div class="nav-item" onclick="navigateTo('leader-page')"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
             <div class="nav-item"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
         </nav>
+
     </div>
 
     <script>
@@ -182,20 +178,32 @@
         const userId = user ? user.id : "guest";
         
         let currentBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0000;
-        let isAdShowing = false; // KİLİD MEXANİZMİ
+        let isAdShowing = false;
 
         let adData = JSON.parse(localStorage.getItem('adData_' + userId)) || {
             ad1: 0, ad2: 0, lastResetDate: ""
         };
 
+        // NAVİQASİYA FUNKSİYASI
+        function navigateTo(pageId) {
+            // Bütün səhifələri gizlət
+            document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+            // Seçilən səhifəni göstər
+            document.getElementById(pageId).classList.add('active');
+            
+            // Menyu ikon rənglərini dəyiş
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if(pageId === 'leader-page') { updateLeaderboard(); }
+        }
+
         function checkDailyReset() {
             const now = new Date();
             const bakuTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
             const todayDate = bakuTime.toISOString().split('T')[0];
-
             if (adData.lastResetDate !== todayDate) {
-                adData.ad1 = 0;
-                adData.ad2 = 0;
+                adData.ad1 = 0; adData.ad2 = 0;
                 adData.lastResetDate = todayDate;
                 saveData();
             }
@@ -209,39 +217,24 @@
         function updateUI() {
             checkDailyReset();
             document.getElementById('balance-display').innerText = currentBalance.toFixed(4) + " ₼";
-            
-            // Reklam 1 UI
             document.getElementById('ad-count-1').innerText = adData.ad1 + "/25";
-            const card1 = document.getElementById('ad-card-1');
-            if(adData.ad1 >= 25) {
-                document.getElementById('ad-status-1').innerText = "Limit Doldu";
-                card1.classList.add('disabled');
-            }
-
-            // Reklam 2 UI
             document.getElementById('ad-count-2').innerText = adData.ad2 + "/25";
-            const card2 = document.getElementById('ad-card-2');
-            if(adData.ad2 >= 25) {
-                document.getElementById('ad-status-2').innerText = "Limit Doldu";
-                card2.classList.add('disabled');
-            }
 
-            // Kilid vəziyyətinə görə kartları dondur/aç
-            if (isAdShowing) {
-                card1.classList.add('locked');
-                card2.classList.add('locked');
-            } else {
-                card1.classList.remove('locked');
-                card2.classList.remove('locked');
-            }
+            const card1 = document.getElementById('ad-card-1');
+            const card2 = document.getElementById('ad-card-2');
+
+            if(adData.ad1 >= 25) { document.getElementById('ad-status-1').innerText = "Limit Doldu"; card1.classList.add('disabled'); }
+            if(adData.ad2 >= 25) { document.getElementById('ad-status-2').innerText = "Limit Doldu"; card2.classList.add('disabled'); }
+
+            if (isAdShowing) { card1.classList.add('locked'); card2.classList.add('locked'); } 
+            else { card1.classList.remove('locked'); card2.classList.remove('locked'); }
 
             if (user) {
                 document.getElementById('user-name').innerText = `${user.first_name} ${user.last_name || ''}`;
                 document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
                 if (user.photo_url) {
                     const img = document.getElementById('user-photo');
-                    img.src = user.photo_url;
-                    img.style.display = 'block';
+                    img.src = user.photo_url; img.style.display = 'block';
                     document.getElementById('default-icon').style.display = 'none';
                 }
             }
@@ -249,16 +242,12 @@
 
         function handleAdClick(sdkFunction, adNum) {
             const adKey = 'ad' + adNum;
-
-            // Əgər artıq bir reklam açıqdırsa və ya limit dolubsa, heç nə etmə
             if (isAdShowing || adData[adKey] >= 25) return;
 
             if (typeof window[sdkFunction] === 'function') {
-                isAdShowing = true; // KİLİDİ AKTİV ET
-                updateUI(); // Digər butonu bozart
-
+                isAdShowing = true;
+                updateUI();
                 window[sdkFunction]();
-                
                 tg.MainButton.setText("Reklam izlənilir (15 san)...");
                 tg.MainButton.show();
                 tg.MainButton.disable();
@@ -266,17 +255,38 @@
                 setTimeout(() => {
                     currentBalance += 0.0005;
                     adData[adKey] += 1;
-                    
-                    isAdShowing = false; // KİLİDİ AÇ
+                    isAdShowing = false;
                     saveData();
-                    updateUI(); // Butonları aktivləşdir
-                    
+                    updateUI();
                     tg.MainButton.hide();
                     tg.HapticFeedback.notificationOccurred('success');
                 }, 15000);
-            } else {
-                tg.showAlert("Reklam hələ hazır deyil.");
             }
+        }
+
+        // LİDERLƏR SİYAHISINI YENİLƏ
+        function updateLeaderboard() {
+            const container = document.getElementById('leader-list-container');
+            let myName = user ? user.first_name : "Sən";
+            let players = [
+                { name: myName + " (Sən)", balance: currentBalance, isMe: true },
+                { name: "Vüsal", balance: 0.1500, isMe: false },
+                { name: "Leyla", balance: 0.0850, isMe: false },
+                { name: "Anar", balance: 0.0420, isMe: false }
+            ];
+            players.sort((a, b) => b.balance - a.balance);
+            
+            let html = '';
+            players.forEach((p, i) => {
+                html += `
+                    <div class="leader-row" style="${p.isMe ? 'border: 1px solid var(--theme-red); background: #fff5f5;' : ''}">
+                        <div class="rank-num">${i+1}</div>
+                        <div class="leader-info">${p.name}</div>
+                        <div class="leader-bal">${p.balance.toFixed(4)} ₼</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         updateUI();
