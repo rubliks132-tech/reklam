@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Mini App - Red Theme</title>
+    <title>Telegram Mini App - Ads System</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -26,13 +26,10 @@
             background-color: var(--bg-gray);
             margin: 0;
             padding: 0;
+            font-family: 'Inter', sans-serif;
         }
 
-        body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-        }
+        body { display: flex; justify-content: center; }
 
         .phone-container {
             width: 100%;
@@ -71,7 +68,6 @@
             border-radius: 25px; padding: 25px; color: white;
             margin-bottom: 25px; box-shadow: 0 10px 25px rgba(255, 77, 77, 0.25);
         }
-
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
@@ -86,8 +82,14 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9; 
             cursor: pointer; transition: 0.2s;
         }
-        
-        /* Limit dolanda stil */
+
+        /* Dondurma stili (Eyni anda baxmamaq üçün) */
+        .task-item.locked {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.8);
+        }
+
         .task-item.disabled {
             opacity: 0.6;
             pointer-events: none;
@@ -98,7 +100,6 @@
         .task-text b { display: block; font-size: 15px; color: var(--text-main); }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
         
-        /* Sağ tərəf (Sayğac + Buton) */
         .task-status-container { display: flex; align-items: center; gap: 8px; }
         .counter-text { font-size: 12px; font-weight: 700; color: var(--text-light); }
         .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; color: var(--text-main); }
@@ -111,7 +112,6 @@
             display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; }
         .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
         .nav-item.active { color: var(--theme-red); }
@@ -122,7 +122,7 @@
     <div class="phone-container">
         <div class="header-profile">
             <div class="avatar-wrapper">
-                <img id="user-photo" src="" alt="Profile">
+                <img id="user-photo" src="" alt="">
                 <div id="default-icon" class="default-avatar"><i class="fa-solid fa-user"></i></div>
             </div>
             <div class="user-meta">
@@ -181,22 +181,17 @@
         const user = tg.initDataUnsafe?.user;
         const userId = user ? user.id : "guest";
         
-        // MƏLUMATLARIN YÜKLƏNMƏSİ
         let currentBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0000;
-        
-        // Reklam datası (sayğaclar və son yenilənmə tarixi)
+        let isAdShowing = false; // KİLİD MEXANİZMİ
+
         let adData = JSON.parse(localStorage.getItem('adData_' + userId)) || {
-            ad1: 0,
-            ad2: 0,
-            lastResetDate: ""
+            ad1: 0, ad2: 0, lastResetDate: ""
         };
 
-        // GÜNLÜK SIFIRLAMA MEXANİZMİ (Bakı Vaxtı ilə 00:00)
         function checkDailyReset() {
-            // Bakı vaxtını hesabla (UTC+4)
             const now = new Date();
             const bakuTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
-            const todayDate = bakuTime.toISOString().split('T')[0]; // YYYY-MM-DD formatında
+            const todayDate = bakuTime.toISOString().split('T')[0];
 
             if (adData.lastResetDate !== todayDate) {
                 adData.ad1 = 0;
@@ -213,46 +208,55 @@
 
         function updateUI() {
             checkDailyReset();
-            
             document.getElementById('balance-display').innerText = currentBalance.toFixed(4) + " ₼";
             
-            // Reklam #1 UI Yenilə
+            // Reklam 1 UI
             document.getElementById('ad-count-1').innerText = adData.ad1 + "/25";
+            const card1 = document.getElementById('ad-card-1');
             if(adData.ad1 >= 25) {
                 document.getElementById('ad-status-1').innerText = "Limit Doldu";
-                document.getElementById('ad-card-1').classList.add('disabled');
+                card1.classList.add('disabled');
             }
 
-            // Reklam #2 UI Yenilə
+            // Reklam 2 UI
             document.getElementById('ad-count-2').innerText = adData.ad2 + "/25";
+            const card2 = document.getElementById('ad-card-2');
             if(adData.ad2 >= 25) {
                 document.getElementById('ad-status-2').innerText = "Limit Doldu";
-                document.getElementById('ad-card-2').classList.add('disabled');
+                card2.classList.add('disabled');
             }
 
-            // İstifadəçi məlumatları
+            // Kilid vəziyyətinə görə kartları dondur/aç
+            if (isAdShowing) {
+                card1.classList.add('locked');
+                card2.classList.add('locked');
+            } else {
+                card1.classList.remove('locked');
+                card2.classList.remove('locked');
+            }
+
             if (user) {
                 document.getElementById('user-name').innerText = `${user.first_name} ${user.last_name || ''}`;
                 document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
                 if (user.photo_url) {
-                    document.getElementById('user-photo').src = user.photo_url;
-                    document.getElementById('user-photo').style.display = 'block';
+                    const img = document.getElementById('user-photo');
+                    img.src = user.photo_url;
+                    img.style.display = 'block';
                     document.getElementById('default-icon').style.display = 'none';
                 }
             }
         }
 
-        // REKLAM FUNKSİYASI
         function handleAdClick(sdkFunction, adNum) {
             const adKey = 'ad' + adNum;
 
-            // Limit yoxlanışı
-            if (adData[adKey] >= 25) {
-                tg.showAlert("Bu günlük limitiniz dolub! Gecə 00:00-dan sonra yenidən gəlin.");
-                return;
-            }
+            // Əgər artıq bir reklam açıqdırsa və ya limit dolubsa, heç nə etmə
+            if (isAdShowing || adData[adKey] >= 25) return;
 
             if (typeof window[sdkFunction] === 'function') {
+                isAdShowing = true; // KİLİDİ AKTİV ET
+                updateUI(); // Digər butonu bozart
+
                 window[sdkFunction]();
                 
                 tg.MainButton.setText("Reklam izlənilir (15 san)...");
@@ -261,10 +265,11 @@
 
                 setTimeout(() => {
                     currentBalance += 0.0005;
-                    adData[adKey] += 1; // Sayğacı artır
+                    adData[adKey] += 1;
                     
+                    isAdShowing = false; // KİLİDİ AÇ
                     saveData();
-                    updateUI();
+                    updateUI(); // Butonları aktivləşdir
                     
                     tg.MainButton.hide();
                     tg.HapticFeedback.notificationOccurred('success');
@@ -274,9 +279,7 @@
             }
         }
 
-        // İlk işə düşmə
         updateUI();
-
     </script>
 </body>
 </html>
