@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Liderlər - Ads App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -26,117 +27,80 @@
             max-width: 400px;
             background: white;
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
         }
 
         .header {
-            padding: 30px 20px;
+            padding: 25px 20px;
             text-align: center;
-            background: linear-gradient(180deg, #fff 0%, var(--bg-gray) 100%);
-        }
-
-        .header h1 { font-size: 24px; margin: 0; color: #2d3436; }
-
-        /* TOP 3 BÖLMƏSİ */
-        .top-three {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 15px;
-            margin: 20px 0 40px 0;
-            padding: 0 10px;
-        }
-
-        .top-user {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-
-        /* 1-ci yer */
-        .top-user.rank-1 .avatar {
-            width: 90px; height: 90px;
-            border: 4px solid var(--gold);
-            box-shadow: 0 10px 20px rgba(241, 196, 15, 0.3);
-        }
-        /* 2 və 3-cü yer */
-        .top-user.rank-2 .avatar, .top-user.rank-3 .avatar {
-            width: 75px; height: 75px;
-        }
-        .top-user.rank-2 .avatar { border: 3px solid var(--silver); }
-        .top-user.rank-3 .avatar { border: 3px solid var(--bronze); }
-
-        .avatar {
-            border-radius: 50%;
-            background: #eee;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        .crown {
-            position: absolute;
-            top: -20px; font-size: 24px;
-            color: var(--gold);
-        }
-
-        .rank-badge {
-            position: absolute;
-            bottom: 45px;
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 12px; font-weight: bold; color: white;
-        }
-        .rank-1 .rank-badge { background: var(--gold); bottom: 55px; }
-        .rank-2 .rank-badge { background: var(--silver); }
-        .rank-3 .rank-badge { background: var(--bronze); }
-
-        .top-name { font-weight: 700; font-size: 14px; color: #2d3436; }
-        .top-balance { font-weight: 800; font-size: 12px; color: var(--theme-red); }
-
-        /* SİYAHI (4-100) */
-        .list-container {
-            padding: 0 20px;
-        }
-
-        .list-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
             background: #fff;
-            border-radius: 18px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 { font-size: 20px; margin: 0; color: #2d3436; }
+
+        /* Siyahı Dizaynı */
+        .list-container { padding: 15px; }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #fff;
+            border-radius: 20px;
             margin-bottom: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             border: 1px solid #f0f0f0;
+            transition: 0.3s;
         }
 
-        .list-rank {
-            width: 30px;
-            font-weight: 800;
-            color: var(--text-light);
-            font-size: 14px;
+        /* İlk 3 yer üçün fərqli rənglər */
+        .user-row.rank-1 { border-left: 5px solid var(--gold); background: #fffdf2; }
+        .user-row.rank-2 { border-left: 5px solid var(--silver); background: #fcfcfc; }
+        .user-row.rank-3 { border-left: 5px solid var(--bronze); background: #fffaf5; }
+
+        .rank-number {
+            width: 35px;
+            font-weight: 900;
+            font-size: 16px;
+            color: #b2bec3;
         }
 
-        .list-avatar {
-            width: 40px; height: 40px;
+        .rank-1 .rank-number { color: var(--gold); }
+        .rank-2 .rank-number { color: var(--silver); }
+        .rank-3 .rank-number { color: var(--bronze); }
+
+        .user-avatar {
+            width: 45px; height: 45px;
             border-radius: 50%;
             margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid #eee;
         }
 
-        .list-info { flex: 1; }
-        .list-name { font-weight: 600; font-size: 14px; display: block; }
-        .list-balance { font-weight: 800; font-size: 13px; color: var(--theme-red); }
+        .user-info { flex: 1; }
+        .user-name { font-weight: 700; font-size: 14px; color: #2d3436; display: block; }
+        .user-balance { font-weight: 800; font-size: 13px; color: var(--theme-red); }
 
-        /* Alt Menyu (Eyni qalsın deyə) */
+        .me-badge {
+            background: var(--theme-red);
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* Menyu */
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); height: 75px; border-radius: 24px;
+            backdrop-filter: blur(10px); height: 80px; border-radius: 24px;
             display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #a0a0a0; text-decoration: none; flex: 1; font-size: 18px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #a0a0a0; text-decoration: none; flex: 1; }
         .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
         .nav-item.active { color: var(--theme-red); }
     </style>
@@ -145,29 +109,7 @@
 
 <div class="leaderboard-container">
     <div class="header">
-        <h1>🏆 Liderlər Siyahısı</h1>
-    </div>
-
-    <div class="top-three" id="top-3-container">
-        <div class="top-user rank-2">
-            <img src="https://i.pravatar.cc/150?u=2" class="avatar">
-            <div class="rank-badge">2</div>
-            <span class="top-name">Elvin</span>
-            <span class="top-balance">45.5000 ₼</span>
-        </div>
-        <div class="top-user rank-1">
-            <i class="fa-solid fa-crown crown"></i>
-            <img src="https://i.pravatar.cc/150?u=1" class="avatar">
-            <div class="rank-badge">1</div>
-            <span class="top-name">Nihad</span>
-            <span class="top-balance">62.1200 ₼</span>
-        </div>
-        <div class="top-user rank-3">
-            <img src="https://i.pravatar.cc/150?u=3" class="avatar">
-            <div class="rank-badge">3</div>
-            <span class="top-name">Aysel</span>
-            <span class="top-balance">38.9000 ₼</span>
-        </div>
+        <h1>🏆 Top 100 Liderlər</h1>
     </div>
 
     <div class="list-container" id="leaderboard-list">
@@ -183,28 +125,56 @@
 </div>
 
 <script>
-    // Nümunə istifadəçi siyahısı (100 nəfər üçün)
-    function generateLeaderboard() {
-        const listContainer = document.getElementById('leaderboard-list');
-        let html = '';
+    const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe?.user;
+    const userId = user ? user.id : "guest";
+    
+    // 1. Öz məlumatlarını gətir
+    let myBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0000;
+    let myName = user ? (user.first_name + " " + (user.last_name || "")) : "Mən (Sən)";
+    let myPhoto = user?.photo_url || "https://ui-avatars.com/api/?name=" + myName;
 
-        for (let i = 4; i <= 100; i++) {
+    // 2. Liderlər siyahısını formalaşdır (Simulyasiya)
+    function renderLeaderboard() {
+        const listContainer = document.getElementById('leaderboard-list');
+        
+        // Bu siyahı normalda serverdən gəlməlidir. 
+        // İndi sənin balansına uyğun yerini təyin edirik.
+        let players = [
+            { id: 101, name: "Vüsal", balance: 50.2500, photo: "https://i.pravatar.cc/150?u=1" },
+            { id: 102, name: "Leyla", balance: 42.1000, photo: "https://i.pravatar.cc/150?u=2" },
+            { id: 103, name: "Rauf", balance: 35.0000, photo: "https://i.pravatar.cc/150?u=3" },
+            { id: userId, name: myName, balance: myBalance, photo: myPhoto, isMe: true },
+            { id: 104, name: "Anar", balance: 12.4500, photo: "https://i.pravatar.cc/150?u=4" },
+            { id: 105, name: "Günel", balance: 8.9000, photo: "https://i.pravatar.cc/150?u=5" }
+        ];
+
+        // Balansa görə çoxdan aza düz
+        players.sort((a, b) => b.balance - a.balance);
+
+        let html = '';
+        players.slice(0, 100).forEach((player, index) => {
+            const rank = index + 1;
+            const rankClass = rank <= 3 ? `rank-${rank}` : '';
+            const meBadge = player.isMe ? '<span class="me-badge">SƏN</span>' : '';
+
             html += `
-                <div class="list-item">
-                    <div class="list-rank">${i}</div>
-                    <img src="https://i.pravatar.cc/150?u=${i}" class="list-avatar">
-                    <div class="list-info">
-                        <span class="list-name">İstifadəçi #${i}</span>
-                        <span class="list-balance">${(30 - (i*0.2)).toFixed(4)} ₼</span>
+                <div class="user-row ${rankClass}">
+                    <div class="rank-number">${rank}</div>
+                    <img src="${player.photo}" class="user-avatar">
+                    <div class="user-info">
+                        <span class="user-name">${player.name} ${meBadge}</span>
+                        <span class="user-balance">${player.balance.toFixed(4)} ₼</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right" style="color: #eee; font-size: 12px;"></i>
+                    ${rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : ''}
                 </div>
             `;
-        }
+        });
+
         listContainer.innerHTML = html;
     }
 
-    generateLeaderboard();
+    renderLeaderboard();
 </script>
 
 </body>
