@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard UI - Red Theme Pro</title>
+    <title>Telegram Mini App - Red Theme</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -40,7 +41,7 @@
             padding-bottom: 120px; 
         }
 
-        /* Profil */
+        /* Profil Bölməsi */
         .header-profile {
             display: flex;
             align-items: center;
@@ -49,29 +50,41 @@
             background: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             margin-bottom: 25px;
+            border: 1px solid #f0f0f0;
         }
 
         .avatar-wrapper {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             border: 2px solid var(--theme-red);
             padding: 2px;
             margin-right: 12px;
+            overflow: hidden;
         }
 
-        .avatar-img {
+        #user-photo {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: #f0f0f0;
+            object-fit: cover;
+            display: none; /* Şəkil yoxdursa gizli qalsın */
+        }
+
+        .default-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #eee;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 24px;
+            color: #ccc;
         }
 
         .user-meta h3 { margin: 0; font-size: 16px; color: var(--text-main); }
-        .user-meta span { color: var(--text-light); font-size: 13px; }
+        .user-meta span { color: var(--theme-red); font-size: 13px; font-weight: 600; }
 
         /* Balans */
         .balance-card {
@@ -86,71 +99,18 @@
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
-        /* Tapşırıqlar Başlıq */
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 18px;
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .bolt-icon {
-            background: var(--theme-red);
-            color: white;
-            width: 26px;
-            height: 26px;
-            border-radius: 7px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-            font-size: 12px;
-        }
-
-        /* REKLAM YERİ (Əvvəlki Orijinal Halı) */
+        /* Reklamlar */
+        .section-header { display: flex; align-items: center; margin-bottom: 18px; font-weight: 700; }
+        .bolt-icon { background: var(--theme-red); color: white; width: 26px; height: 26px; border-radius: 7px; display: flex; justify-content: center; align-items: center; margin-right: 10px; }
+        
         .task-list { display: flex; flex-direction: column; gap: 12px; }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 18px;
-            border-radius: 25px; /* Daha yuvarlaq */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #f9f9f9;
-        }
-
-        .task-main { display: flex; align-items: center; }
-
-        .video-box {
-            width: 50px;
-            height: 50px;
-            background: var(--theme-red); /* Qırmızı fon */
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white; /* Ağ ikon */
-            font-size: 20px;
-            margin-right: 15px;
-            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
-        }
-
-        .task-text b { display: block; font-size: 16px; margin-bottom: 2px; color: var(--text-main); }
+        .task-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 18px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9; }
+        .video-box { width: 50px; height: 50px; background: var(--theme-red); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; margin-right: 15px; }
+        .task-text b { display: block; font-size: 15px; color: var(--text-main); }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
+        .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; }
 
-        .task-status {
-            background: #f0f2f5;
-            padding: 10px 18px;
-            border-radius: 18px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        /* ALT MENYU */
+        /* Alt Menyu */
         .bottom-nav {
             position: fixed;
             bottom: 15px;
@@ -166,37 +126,13 @@
             justify-content: space-around;
             align-items: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
             z-index: 1000;
         }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-light);
-            text-decoration: none;
-            transition: 0.3s;
-            flex: 1;
-        }
-
-        .nav-item i { font-size: 20px; margin-bottom: 5px; }
-        .nav-item span { font-size: 10px; font-weight: 600; }
-
-        .nav-item.active { color: var(--theme-red); transform: translateY(-5px); }
-        .nav-item.active i {
-            background: #fff0f0;
-            width: 42px;
-            height: 42px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            font-size: 22px;
-        }
-
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; }
+        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
+        .nav-item.active { color: var(--theme-red); }
         .nav-item.special i { color: #f1c40f; }
-
     </style>
 </head>
 <body>
@@ -204,11 +140,12 @@
     <div class="phone-container">
         <div class="header-profile">
             <div class="avatar-wrapper">
-                <div class="avatar-img"><i class="fa-solid fa-crown" style="color: #ffd700;"></i></div>
+                <img id="user-photo" src="" alt="Profile">
+                <div id="default-icon" class="default-avatar"><i class="fa-solid fa-user"></i></div>
             </div>
             <div class="user-meta">
-                <h3>Попов</h3>
-                <span>Premium Üzv</span>
+                <h3 id="user-name">Yüklənir...</h3>
+                <span id="user-tag">@username</span>
             </div>
         </div>
 
@@ -224,55 +161,57 @@
 
         <div class="task-list">
             <div class="task-item">
-                <div class="task-main">
+                <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
-                    <div class="task-text">
-                        <b>Reklam İzlə #1</b>
-                        <span>+ 0.0005 ₼</span>
-                    </div>
+                    <div class="task-text"><b>Reklam İzlə #1</b><span>+ 0.0005 ₼</span></div>
                 </div>
                 <div class="task-status">0/25</div>
             </div>
 
             <div class="task-item">
-                <div class="task-main">
+                <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
-                    <div class="task-text">
-                        <b>Reklam İzlə #2</b>
-                        <span>+ 0.0005 ₼</span>
-                    </div>
+                    <div class="task-text"><b>Reklam İzlə #2</b><span>+ 0.0005 ₼</span></div>
                 </div>
                 <div class="task-status">0/25</div>
             </div>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active">
-                <i class="fa-solid fa-house-chimney-window"></i>
-                <span>Ana Səhifə</span>
-            </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-list-check"></i>
-                <span>İşlər</span>
-            </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-handshake-angle"></i>
-                <span>Dostlar</span>
-            </div>
-            <div class="nav-item special">
-                <i class="fa-solid fa-trophy"></i>
-                <span>Liderlər</span>
-            </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-gem"></i>
-                <span>Bonus</span>
-            </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-credit-card"></i>
-                <span>Cüzdan</span>
-            </div>
+            <div class="nav-item active"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
+            <div class="nav-item"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
+            <div class="nav-item"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
+            <div class="nav-item special"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
+            <div class="nav-item"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
         </nav>
     </div>
 
+    <script>
+        // Telegram WebApp obyektini başlat
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Ekranı tam aç
+
+        // İstifadəçi məlumatlarını Telegram-dan al
+        const user = tg.initDataUnsafe?.user;
+
+        if (user) {
+            // Adı və Soyadı yaz (məs: Elvin Məmmədov)
+            document.getElementById('user-name').innerText = `${user.first_name} ${user.last_name || ''}`;
+            
+            // Username yaz (məs: @elvin_dev)
+            document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
+
+            // Əgər profil şəkli varsa göstər
+            if (user.photo_url) {
+                document.getElementById('user-photo').src = user.photo_url;
+                document.getElementById('user-photo').style.display = 'block';
+                document.getElementById('default-icon').style.display = 'none';
+            }
+        } else {
+            // Əgər Telegram daxilində deyilsə (test üçün)
+            document.getElementById('user-name').innerText = "Qonaq";
+            document.getElementById('user-tag').innerText = "@test_user";
+        }
+    </script>
 </body>
 </html>
