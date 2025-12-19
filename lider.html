@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Liderlər - Ads App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --theme-red: #ff4d4d;
+            --gold: #f1c40f;
+            --silver: #bdc3c7;
+            --bronze: #e67e22;
+            --bg-gray: #f8f9fd;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
+        }
+
+        .leaderboard-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            padding: 30px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #fff 0%, var(--bg-gray) 100%);
+        }
+
+        .header h1 { font-size: 24px; margin: 0; color: #2d3436; }
+
+        /* TOP 3 BÖLMƏSİ */
+        .top-three {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 15px;
+            margin: 20px 0 40px 0;
+            padding: 0 10px;
+        }
+
+        .top-user {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 1-ci yer */
+        .top-user.rank-1 .avatar {
+            width: 90px; height: 90px;
+            border: 4px solid var(--gold);
+            box-shadow: 0 10px 20px rgba(241, 196, 15, 0.3);
+        }
+        /* 2 və 3-cü yer */
+        .top-user.rank-2 .avatar, .top-user.rank-3 .avatar {
+            width: 75px; height: 75px;
+        }
+        .top-user.rank-2 .avatar { border: 3px solid var(--silver); }
+        .top-user.rank-3 .avatar { border: 3px solid var(--bronze); }
+
+        .avatar {
+            border-radius: 50%;
+            background: #eee;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .crown {
+            position: absolute;
+            top: -20px; font-size: 24px;
+            color: var(--gold);
+        }
+
+        .rank-badge {
+            position: absolute;
+            bottom: 45px;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 12px; font-weight: bold; color: white;
+        }
+        .rank-1 .rank-badge { background: var(--gold); bottom: 55px; }
+        .rank-2 .rank-badge { background: var(--silver); }
+        .rank-3 .rank-badge { background: var(--bronze); }
+
+        .top-name { font-weight: 700; font-size: 14px; color: #2d3436; }
+        .top-balance { font-weight: 800; font-size: 12px; color: var(--theme-red); }
+
+        /* SİYAHI (4-100) */
+        .list-container {
+            padding: 0 20px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #fff;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0;
+        }
+
+        .list-rank {
+            width: 30px;
+            font-weight: 800;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .list-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .list-info { flex: 1; }
+        .list-name { font-weight: 600; font-size: 14px; display: block; }
+        .list-balance { font-weight: 800; font-size: 13px; color: var(--theme-red); }
+
+        /* Alt Menyu (Eyni qalsın deyə) */
+        .bottom-nav {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); height: 75px; border-radius: 24px;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #a0a0a0; text-decoration: none; flex: 1; font-size: 18px; }
+        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
+        .nav-item.active { color: var(--theme-red); }
+    </style>
+</head>
+<body>
+
+<div class="leaderboard-container">
+    <div class="header">
+        <h1>🏆 Liderlər Siyahısı</h1>
+    </div>
+
+    <div class="top-three" id="top-3-container">
+        <div class="top-user rank-2">
+            <img src="https://i.pravatar.cc/150?u=2" class="avatar">
+            <div class="rank-badge">2</div>
+            <span class="top-name">Elvin</span>
+            <span class="top-balance">45.5000 ₼</span>
+        </div>
+        <div class="top-user rank-1">
+            <i class="fa-solid fa-crown crown"></i>
+            <img src="https://i.pravatar.cc/150?u=1" class="avatar">
+            <div class="rank-badge">1</div>
+            <span class="top-name">Nihad</span>
+            <span class="top-balance">62.1200 ₼</span>
+        </div>
+        <div class="top-user rank-3">
+            <img src="https://i.pravatar.cc/150?u=3" class="avatar">
+            <div class="rank-badge">3</div>
+            <span class="top-name">Aysel</span>
+            <span class="top-balance">38.9000 ₼</span>
+        </div>
+    </div>
+
+    <div class="list-container" id="leaderboard-list">
+        </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
+        <div class="nav-item"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
+        <div class="nav-item"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
+        <div class="nav-item active"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
+        <div class="nav-item"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
+    </nav>
+</div>
+
+<script>
+    // Nümunə istifadəçi siyahısı (100 nəfər üçün)
+    function generateLeaderboard() {
+        const listContainer = document.getElementById('leaderboard-list');
+        let html = '';
+
+        for (let i = 4; i <= 100; i++) {
+            html += `
+                <div class="list-item">
+                    <div class="list-rank">${i}</div>
+                    <img src="https://i.pravatar.cc/150?u=${i}" class="list-avatar">
+                    <div class="list-info">
+                        <span class="list-name">İstifadəçi #${i}</span>
+                        <span class="list-balance">${(30 - (i*0.2)).toFixed(4)} ₼</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #eee; font-size: 12px;"></i>
+                </div>
+            `;
+        }
+        listContainer.innerHTML = html;
+    }
+
+    generateLeaderboard();
+</script>
+
+</body>
+</html>
