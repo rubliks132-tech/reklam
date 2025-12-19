@@ -7,6 +7,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <script src='//libtl.com/sdk.js' data-zone='10180357' data-sdk='show_10180357'></script>
     <script src='//libtl.com/sdk.js' data-zone='10198423' data-sdk='show_10198423'></script>
 
@@ -16,6 +19,7 @@
             --bg-gray: #f8f9fd;
             --text-main: #2d3436;
             --text-light: #a0a0a0;
+            --gold: #f1c40f;
         }
 
         html, body {
@@ -33,7 +37,6 @@
             position: relative; padding-bottom: 120px; 
         }
 
-        /* BÖLMƏLƏRİN İDARƏ EDİLMƏSİ */
         .app-page { display: none; }
         .app-page.active { display: block; }
 
@@ -66,7 +69,7 @@
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
-        /* Reklamlar və Tapşırıqlar */
+        /* Tasklar */
         .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-item { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -75,15 +78,25 @@
             cursor: pointer; transition: 0.2s;
         }
 
-        .task-item.locked, .task-item.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-
+        .task-item.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .video-box { width: 50px; height: 50px; background: var(--theme-red); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; margin-right: 15px; }
         .task-text b { display: block; font-size: 15px; color: var(--text-main); }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
-        
         .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; color: var(--text-main); }
 
-        /* Alt Menyu */
+        /* Liderlər siyahısı stili */
+        #leader-list-container { margin-top: 20px; }
+        .leader-item {
+            display: flex; align-items: center; padding: 12px;
+            background: #fff; border-radius: 18px; margin-bottom: 10px;
+            border: 1px solid #f0f0f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .rank-num { width: 30px; font-weight: 800; color: var(--theme-red); }
+        .leader-avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; border: 1px solid #eee; }
+        .leader-name { flex: 1; font-weight: 600; font-size: 14px; }
+        .leader-bal { font-weight: 800; color: var(--text-main); font-size: 13px; }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
@@ -92,13 +105,8 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 20px; }
-        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
         .nav-item.active { color: var(--theme-red); }
-
-        /* Liderlər Siyahısı Stili */
-        .leader-item { display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 20px; margin-bottom: 10px; border: 1px solid #eee; }
-        .rank { font-weight: 800; width: 30px; color: var(--theme-red); }
+        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -134,7 +142,6 @@
                         <div id="ad-status-1" class="task-status">İzlə</div>
                     </div>
                 </div>
-
                 <div id="ad-card-2" class="task-item" onclick="handleAdClick('show_10198423', 2)">
                     <div style="display: flex; align-items: center;">
                         <div class="video-box"><i class="fa-solid fa-video"></i></div>
@@ -148,78 +155,107 @@
             </div>
         </div>
 
-        <div id="jobs-page" class="app-page">
-            <h3>Tezliklə</h3>
-            <p style="color: gray;">Yeni işlər üzərində işləyirik...</p>
-        </div>
-
-        <div id="friends-page" class="app-page">
-            <h3>Dostlarını Dəvət Et</h3>
-            <div class="task-item">
-                <div class="task-text"><b>Dəvət Linki</b><span style="color: var(--text-light)">Tezliklə aktiv olacaq</span></div>
-            </div>
-        </div>
-
         <div id="leader-page" class="app-page">
             <h3>🏆 Liderlər Siyahısı</h3>
-            <div class="leader-item"><div class="rank">1</div><div style="flex:1"><b>Vüsal</b></div><div>0.5500 ₼</div></div>
-            <div class="leader-item"><div class="rank">2</div><div style="flex:1"><b>Sən</b></div><div id="leader-my-balance">0.0000 ₼</div></div>
+            <div id="leader-list-container">
+                <p style="text-align:center; color:gray;">Yüklənir...</p>
+            </div>
         </div>
 
+        <div id="jobs-page" class="app-page"><h3>Tezliklə...</h3></div>
+        <div id="friends-page" class="app-page"><h3>Dostlar Tezliklə...</h3></div>
         <div id="wallet-page" class="app-page">
             <h3>Cüzdan</h3>
-            <div class="balance-card" style="background: #2d3436;">
-                <div class="balance-label">ÇIXARIŞ ÜÇÜN BALANS</div>
-                <div id="wallet-display" class="balance-value">0.0000 ₼</div>
-            </div>
-            <button style="width:100%; padding:15px; border-radius:15px; border:none; background: var(--theme-red); color:white; font-weight:bold;">Pulu Çıxar</button>
+            <div id="wallet-display" class="balance-value" style="color:black">0.0000 ₼</div>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="navigateTo('home-page')"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
-            <div class="nav-item" onclick="navigateTo('jobs-page')"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
-            <div class="nav-item" onclick="navigateTo('friends-page')"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
-            <div class="nav-item" onclick="navigateTo('leader-page')"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
-            <div class="nav-item" onclick="navigateTo('wallet-page')"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
+            <div class="nav-item active" onclick="navigateTo('home-page', this)"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
+            <div class="nav-item" onclick="navigateTo('jobs-page', this)"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
+            <div class="nav-item" onclick="navigateTo('friends-page', this)"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
+            <div class="nav-item" onclick="navigateTo('leader-page', this)"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
+            <div class="nav-item" onclick="navigateTo('wallet-page', this)"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
         </nav>
     </div>
 
     <script>
+        // 1. FIREBASE KONFİQURASİYASI (Buranı mütləq doldur!)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         const tg = window.Telegram.WebApp;
         tg.expand();
+        const user = tg.initDataUnsafe?.user || { id: "guest", first_name: "Qonaq" };
+        const userId = user.id;
 
-        const user = tg.initDataUnsafe?.user;
-        const userId = user ? user.id : "guest";
-        
         let currentBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0000;
+        let adData = JSON.parse(localStorage.getItem('adData_' + userId)) || { ad1: 0, ad2: 0, lastResetDate: "" };
         let isAdShowing = false;
 
-        let adData = JSON.parse(localStorage.getItem('adData_' + userId)) || {
-            ad1: 0, ad2: 0, lastResetDate: ""
-        };
-
-        // SƏHİFƏ KEÇİD FUNKSİYASI (DIV-LƏRİ DƏYİŞİR)
-        function navigateTo(pageId) {
-            document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            // Cüzdan və Liderlər bölməsini yenilə
-            if(pageId === 'wallet-page') document.getElementById('wallet-display').innerText = currentBalance.toFixed(4) + " ₼";
-            if(pageId === 'leader-page') document.getElementById('leader-my-balance').innerText = currentBalance.toFixed(4) + " ₼";
+        // İSTİFADƏÇİNİ FIREBASE-Ə SYNC ET
+        function syncUserToFirebase() {
+            database.ref('users/' + userId).set({
+                name: user.first_name,
+                balance: currentBalance,
+                photo: user.photo_url || ""
+            });
         }
 
-        function checkDailyReset() {
-            const now = new Date();
-            const bakuTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
-            const todayDate = bakuTime.toISOString().split('T')[0];
+        // LİDERLƏRİ ÇƏK
+        function loadLeaders() {
+            database.ref('users').orderByChild('balance').limitToLast(100).on('value', (snapshot) => {
+                let users = [];
+                snapshot.forEach(child => { users.push(child.val()); });
+                users.reverse();
+                
+                let html = '';
+                users.forEach((u, index) => {
+                    html += `
+                        <div class="leader-item">
+                            <div class="rank-num">${index + 1}</div>
+                            <img src="${u.photo || 'https://via.placeholder.com/40'}" class="leader-avatar">
+                            <div class="leader-name">${u.name} ${u.name === user.first_name ? '(Sən)' : ''}</div>
+                            <div class="leader-bal">${u.balance.toFixed(4)} ₼</div>
+                        </div>`;
+                });
+                document.getElementById('leader-list-container').innerHTML = html;
+            });
+        }
 
-            if (adData.lastResetDate !== todayDate) {
-                adData.ad1 = 0; adData.ad2 = 0;
-                adData.lastResetDate = todayDate;
-                saveData();
+        function navigateTo(pageId, element) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+            if(pageId === 'leader-page') loadLeaders();
+            if(pageId === 'wallet-page') document.getElementById('wallet-display').innerText = currentBalance.toFixed(4) + " ₼";
+        }
+
+        function handleAdClick(sdkFunction, adNum) {
+            const adKey = 'ad' + adNum;
+            if (isAdShowing || adData[adKey] >= 25) return;
+            if (typeof window[sdkFunction] === 'function') {
+                isAdShowing = true;
+                window[sdkFunction]();
+                tg.MainButton.setText("Reklam İzlənir...").show().disable();
+                setTimeout(() => {
+                    currentBalance += 0.0005;
+                    adData[adKey]++;
+                    isAdShowing = false;
+                    saveData();
+                    syncUserToFirebase();
+                    updateUI();
+                    tg.MainButton.hide();
+                }, 15000);
             }
         }
 
@@ -229,57 +265,18 @@
         }
 
         function updateUI() {
-            checkDailyReset();
             document.getElementById('balance-display').innerText = currentBalance.toFixed(4) + " ₼";
-            
-            // Reklam 1
             document.getElementById('ad-count-1').innerText = adData.ad1 + "/25";
-            if(adData.ad1 >= 25) {
-                document.getElementById('ad-status-1').innerText = "Limit Doldu";
-                document.getElementById('ad-card-1').classList.add('disabled');
-            }
-
-            // Reklam 2
             document.getElementById('ad-count-2').innerText = adData.ad2 + "/25";
-            if(adData.ad2 >= 25) {
-                document.getElementById('ad-status-2').innerText = "Limit Doldu";
-                document.getElementById('ad-card-2').classList.add('disabled');
-            }
-
-            if (user) {
-                document.getElementById('user-name').innerText = user.first_name;
-                document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
-                if (user.photo_url) {
-                    const img = document.getElementById('user-photo');
-                    img.src = user.photo_url;
-                    img.style.display = 'block';
-                    document.getElementById('default-icon').style.display = 'none';
-                }
+            document.getElementById('user-name').innerText = user.first_name;
+            if(user.photo_url) {
+                document.getElementById('user-photo').src = user.photo_url;
+                document.getElementById('user-photo').style.display = 'block';
+                document.getElementById('default-icon').style.display = 'none';
             }
         }
 
-        function handleAdClick(sdkFunction, adNum) {
-            const adKey = 'ad' + adNum;
-            if (isAdShowing || adData[adKey] >= 25) return;
-
-            if (typeof window[sdkFunction] === 'function') {
-                isAdShowing = true;
-                window[sdkFunction]();
-                
-                tg.MainButton.setText("Reklam izlənilir (15 san)...").show().disable();
-
-                setTimeout(() => {
-                    currentBalance += 0.0005;
-                    adData[adKey] += 1;
-                    isAdShowing = false;
-                    saveData();
-                    updateUI();
-                    tg.MainButton.hide();
-                    tg.HapticFeedback.notificationOccurred('success');
-                }, 15000);
-            }
-        }
-
+        syncUserToFirebase();
         updateUI();
     </script>
 </body>
