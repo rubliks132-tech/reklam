@@ -47,45 +47,20 @@
 
         /* Profil Bölməsi */
         .header-profile {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-radius: 20px;
-            background: #fff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
+            display: flex; align-items: center; padding: 15px;
+            border-radius: 20px; background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 25px;
             border: 1px solid #f0f0f0;
         }
 
         .avatar-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: 2px solid var(--theme-red);
-            padding: 2px;
-            margin-right: 12px;
-            overflow: hidden;
+            width: 55px; height: 55px; border-radius: 50%;
+            border: 2px solid var(--theme-red); padding: 2px;
+            margin-right: 12px; overflow: hidden;
         }
 
-        #user-photo {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .default-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #eee;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #ccc;
-        }
+        #user-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none; }
+        .default-avatar { width: 100%; height: 100%; border-radius: 50%; background: #eee; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #ccc; }
 
         .user-meta h3 { margin: 0; font-size: 16px; color: var(--text-main); }
         .user-meta span { color: var(--theme-red); font-size: 13px; font-weight: 600; }
@@ -93,11 +68,8 @@
         /* Balans */
         .balance-card {
             background: linear-gradient(135deg, #ff6b6b, var(--theme-red));
-            border-radius: 25px;
-            padding: 25px;
-            color: white;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px rgba(255, 77, 77, 0.25);
+            border-radius: 25px; padding: 25px; color: white;
+            margin-bottom: 25px; box-shadow: 0 10px 25px rgba(255, 77, 77, 0.25);
         }
 
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
@@ -109,52 +81,40 @@
         
         .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #fff; 
-            padding: 18px; 
-            border-radius: 25px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border: 1px solid #f9f9f9; 
-            cursor: pointer;
-            transition: 0.2s;
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #fff; padding: 18px; border-radius: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9; 
+            cursor: pointer; transition: 0.2s;
         }
+        
+        /* Limit dolanda stil */
         .task-item.disabled {
             opacity: 0.6;
-            cursor: not-allowed;
+            pointer-events: none;
             filter: grayscale(1);
         }
-        .task-item:active:not(.disabled) { transform: scale(0.96); }
 
         .video-box { width: 50px; height: 50px; background: var(--theme-red); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; margin-right: 15px; }
         .task-text b { display: block; font-size: 15px; color: var(--text-main); }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
-        .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; min-width: 50px; text-align: center; }
+        
+        /* Sağ tərəf (Sayğac + Buton) */
+        .task-status-container { display: flex; align-items: center; gap: 8px; }
+        .counter-text { font-size: 12px; font-weight: 700; color: var(--text-light); }
+        .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; color: var(--text-main); }
 
         /* Alt Menyu */
         .bottom-nav {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 380px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            height: 80px;
-            border-radius: 24px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            z-index: 1000;
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); height: 80px; border-radius: 24px;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 1000;
         }
 
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; }
         .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
         .nav-item.active { color: var(--theme-red); }
-        .nav-item.special i { color: #f1c40f; }
     </style>
 </head>
 <body>
@@ -182,20 +142,26 @@
         </div>
 
         <div class="task-list">
-            <div id="ad1-btn" class="task-item" onclick="handleAdClick('show_10180357', 'ad1')">
+            <div id="ad-card-1" class="task-item" onclick="handleAdClick('show_10180357', 1)">
                 <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
                     <div class="task-text"><b>Reklam İzlə #1</b><span>+ 0.0005 ₼</span></div>
                 </div>
-                <div id="ad1-status" class="task-status">0/25</div>
+                <div class="task-status-container">
+                    <span id="ad-count-1" class="counter-text">0/25</span>
+                    <div id="ad-status-1" class="task-status">İzlə</div>
+                </div>
             </div>
 
-            <div id="ad2-btn" class="task-item" onclick="handleAdClick('show_10198423', 'ad2')">
+            <div id="ad-card-2" class="task-item" onclick="handleAdClick('show_10198423', 2)">
                 <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
                     <div class="task-text"><b>Reklam İzlə #2</b><span>+ 0.0005 ₼</span></div>
                 </div>
-                <div id="ad2-status" class="task-status">0/25</div>
+                <div class="task-status-container">
+                    <span id="ad-count-2" class="counter-text">0/25</span>
+                    <div id="ad-status-2" class="task-status">İzlə</div>
+                </div>
             </div>
         </div>
 
@@ -215,63 +181,56 @@
         const user = tg.initDataUnsafe?.user;
         const userId = user ? user.id : "guest";
         
-        // 1. DATA YÜKLƏMƏ (Balans və Gündəlik Limit)
+        // MƏLUMATLARIN YÜKLƏNMƏSİ
         let currentBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0000;
-        let adCounts = JSON.parse(localStorage.getItem('counts_' + userId)) || {
+        
+        // Reklam datası (sayğaclar və son yenilənmə tarixi)
+        let adData = JSON.parse(localStorage.getItem('adData_' + userId)) || {
             ad1: 0,
             ad2: 0,
-            lastDate: ""
+            lastResetDate: ""
         };
 
-        // Gecə 00:00 Sıfırlama Yoxlanışı (Bakı Vaxtı ilə)
+        // GÜNLÜK SIFIRLAMA MEXANİZMİ (Bakı Vaxtı ilə 00:00)
         function checkDailyReset() {
-            // Bakı vaxtı üçün (UTC+4)
+            // Bakı vaxtını hesabla (UTC+4)
             const now = new Date();
-            const bakuTime = new Date(now.getTime() + (4 * 60 * 60 * 1000));
-            const todayStr = bakuTime.toISOString().split('T')[0];
+            const bakuTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
+            const todayDate = bakuTime.toISOString().split('T')[0]; // YYYY-MM-DD formatında
 
-            if (adCounts.lastDate !== todayStr) {
-                adCounts.ad1 = 0;
-                adCounts.ad2 = 0;
-                adCounts.lastDate = todayStr;
+            if (adData.lastResetDate !== todayDate) {
+                adData.ad1 = 0;
+                adData.ad2 = 0;
+                adData.lastResetDate = todayDate;
                 saveData();
             }
         }
 
         function saveData() {
             localStorage.setItem('balance_' + userId, currentBalance);
-            localStorage.setItem('counts_' + userId, JSON.stringify(adCounts));
+            localStorage.setItem('adData_' + userId, JSON.stringify(adData));
         }
 
         function updateUI() {
             checkDailyReset();
             
-            // Balans
             document.getElementById('balance-display').innerText = currentBalance.toFixed(4) + " ₼";
             
-            // Reklam #1 Statusu
-            const s1 = document.getElementById('ad1-status');
-            const b1 = document.getElementById('ad1-btn');
-            if (adCounts.ad1 >= 25) {
-                s1.innerText = "Limit Doldu";
-                b1.classList.add('disabled');
-            } else {
-                s1.innerText = adCounts.ad1 + "/25";
-                b1.classList.remove('disabled');
+            // Reklam #1 UI Yenilə
+            document.getElementById('ad-count-1').innerText = adData.ad1 + "/25";
+            if(adData.ad1 >= 25) {
+                document.getElementById('ad-status-1').innerText = "Limit Doldu";
+                document.getElementById('ad-card-1').classList.add('disabled');
             }
 
-            // Reklam #2 Statusu
-            const s2 = document.getElementById('ad2-status');
-            const b2 = document.getElementById('ad2-btn');
-            if (adCounts.ad2 >= 25) {
-                s2.innerText = "Limit Doldu";
-                b2.classList.add('disabled');
-            } else {
-                s2.innerText = adCounts.ad2 + "/25";
-                b2.classList.remove('disabled');
+            // Reklam #2 UI Yenilə
+            document.getElementById('ad-count-2').innerText = adData.ad2 + "/25";
+            if(adData.ad2 >= 25) {
+                document.getElementById('ad-status-2').innerText = "Limit Doldu";
+                document.getElementById('ad-card-2').classList.add('disabled');
             }
 
-            // Profil Məlumatları
+            // İstifadəçi məlumatları
             if (user) {
                 document.getElementById('user-name').innerText = `${user.first_name} ${user.last_name || ''}`;
                 document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
@@ -280,17 +239,16 @@
                     document.getElementById('user-photo').style.display = 'block';
                     document.getElementById('default-icon').style.display = 'none';
                 }
-            } else {
-                document.getElementById('user-name').innerText = "Qonaq";
-                document.getElementById('user-tag').innerText = "@test_user";
             }
         }
 
-        // 2. REKLAM FUNKSİYASI
-        function handleAdClick(sdkFunction, adType) {
-            // Əgər limit dolubsa funksiyanı dayandır
-            if (adCounts[adType] >= 25) {
-                tg.showAlert("Bu reklam üçün günlük limitiniz (25/25) dolub. Saat 00:00-dan sonra yenidən yoxlayın.");
+        // REKLAM FUNKSİYASI
+        function handleAdClick(sdkFunction, adNum) {
+            const adKey = 'ad' + adNum;
+
+            // Limit yoxlanışı
+            if (adData[adKey] >= 25) {
+                tg.showAlert("Bu günlük limitiniz dolub! Gecə 00:00-dan sonra yenidən gəlin.");
                 return;
             }
 
@@ -302,22 +260,23 @@
                 tg.MainButton.disable();
 
                 setTimeout(() => {
-                    currentBalance += 0.0005; 
-                    adCounts[adType] += 1; // Sayğacı artır
+                    currentBalance += 0.0005;
+                    adData[adKey] += 1; // Sayğacı artır
                     
                     saveData();
                     updateUI();
                     
                     tg.MainButton.hide();
                     tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert("Təbriklər! 0.0005 ₼ balansınıza əlavə edildi.");
                 }, 15000);
             } else {
-                alert("Reklam hələ yüklənməyib, bir az sonra yenidən yoxlayın.");
+                tg.showAlert("Reklam hələ hazır deyil.");
             }
         }
 
+        // İlk işə düşmə
         updateUI();
+
     </script>
 </body>
 </html>
