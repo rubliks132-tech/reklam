@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Mini App - Red Theme</title>
+    <title>Telegram Mini App - Ads System</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src='//libtl.com/sdk.js' data-zone='10180357' data-sdk='show_10180357'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10198423' data-sdk='show_10198423'></script>
+
     <style>
         :root {
             --theme-red: #ff4d4d;
@@ -22,13 +26,10 @@
             background-color: var(--bg-gray);
             margin: 0;
             padding: 0;
+            font-family: 'Inter', sans-serif;
         }
 
-        body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-        }
+        body { display: flex; justify-content: center; }
 
         .phone-container {
             width: 100%;
@@ -41,98 +42,58 @@
             padding-bottom: 120px; 
         }
 
-        /* Profil Bölməsi */
+        /* Profil */
         .header-profile {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-radius: 20px;
-            background: #fff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
-            border: 1px solid #f0f0f0;
+            display: flex; align-items: center; padding: 15px;
+            border-radius: 20px; background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 25px;
         }
 
         .avatar-wrapper {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: 2px solid var(--theme-red);
-            padding: 2px;
-            margin-right: 12px;
-            overflow: hidden;
+            width: 55px; height: 55px; border-radius: 50%;
+            border: 2px solid var(--theme-red); padding: 2px;
+            margin-right: 12px; overflow: hidden;
         }
 
-        #user-photo {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            display: none; /* Şəkil yoxdursa gizli qalsın */
-        }
-
-        .default-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #eee;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #ccc;
-        }
-
-        .user-meta h3 { margin: 0; font-size: 16px; color: var(--text-main); }
-        .user-meta span { color: var(--theme-red); font-size: 13px; font-weight: 600; }
+        #user-photo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none; }
+        .default-avatar { width: 100%; height: 100%; border-radius: 50%; background: #eee; display: flex; justify-content: center; align-items: center; color: #ccc; }
 
         /* Balans */
         .balance-card {
             background: linear-gradient(135deg, #ff6b6b, var(--theme-red));
-            border-radius: 25px;
-            padding: 25px;
-            color: white;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px rgba(255, 77, 77, 0.25);
+            border-radius: 25px; padding: 25px; color: white;
+            margin-bottom: 25px; box-shadow: 0 10px 25px rgba(255, 77, 77, 0.25);
         }
 
         .balance-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; opacity: 0.8; }
         .balance-value { font-size: 34px; font-weight: 800; margin-top: 5px; }
 
         /* Reklamlar */
-        .section-header { display: flex; align-items: center; margin-bottom: 18px; font-weight: 700; }
-        .bolt-icon { background: var(--theme-red); color: white; width: 26px; height: 26px; border-radius: 7px; display: flex; justify-content: center; align-items: center; margin-right: 10px; }
-        
         .task-list { display: flex; flex-direction: column; gap: 12px; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 18px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9; }
+        .task-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #fff; padding: 18px; border-radius: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f9f9f9;
+            cursor: pointer; transition: transform 0.1s;
+        }
+        .task-item:active { transform: scale(0.98); }
+
         .video-box { width: 50px; height: 50px; background: var(--theme-red); border-radius: 15px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; margin-right: 15px; }
-        .task-text b { display: block; font-size: 15px; color: var(--text-main); }
+        .task-text b { display: block; font-size: 15px; }
         .task-text span { color: #20bf6b; font-size: 13px; font-weight: 700; }
         .task-status { background: #f0f2f5; padding: 8px 15px; border-radius: 15px; font-weight: 800; font-size: 13px; }
 
-        /* Alt Menyu */
+        /* Alt Nav */
         .bottom-nav {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 380px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            height: 80px;
-            border-radius: 24px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 380px; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); height: 80px; border-radius: 24px;
+            display: flex; justify-content: space-around; align-items: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            z-index: 1000;
         }
-
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; font-size: 20px; }
-        .nav-item span { font-size: 10px; font-weight: 600; margin-top: 4px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-light); text-decoration: none; flex: 1; }
+        .nav-item span { font-size: 10px; margin-top: 4px; font-weight: 600; }
         .nav-item.active { color: var(--theme-red); }
-        .nav-item.special i { color: #f1c40f; }
     </style>
 </head>
 <body>
@@ -140,77 +101,96 @@
     <div class="phone-container">
         <div class="header-profile">
             <div class="avatar-wrapper">
-                <img id="user-photo" src="" alt="Profile">
+                <img id="user-photo" src="" alt="">
                 <div id="default-icon" class="default-avatar"><i class="fa-solid fa-user"></i></div>
             </div>
             <div class="user-meta">
-                <h3 id="user-name">Yüklənir...</h3>
+                <h3 id="user-name">İstifadəçi</h3>
                 <span id="user-tag">@username</span>
             </div>
         </div>
 
         <div class="balance-card">
             <div class="balance-label">MÖVCUD BALANS</div>
-            <div class="balance-value">0.0101 ₼</div>
+            <div id="balance" class="balance-value">0.0000 ₼</div>
         </div>
 
-        <div class="section-header">
-            <div class="bolt-icon"><i class="fa-solid fa-bolt"></i></div>
-            Günlük Tapşırıqlar
-        </div>
+        <div style="margin-bottom: 15px; font-weight: 700;">Günlük Tapşırıqlar</div>
 
         <div class="task-list">
-            <div class="task-item">
+            <div class="task-item" onclick="startAd('show_10180357')">
                 <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
                     <div class="task-text"><b>Reklam İzlə #1</b><span>+ 0.0005 ₼</span></div>
                 </div>
-                <div class="task-status">0/25</div>
+                <div class="task-status">İzlə</div>
             </div>
 
-            <div class="task-item">
+            <div class="task-item" onclick="startAd('show_10198423')">
                 <div style="display: flex; align-items: center;">
                     <div class="video-box"><i class="fa-solid fa-video"></i></div>
                     <div class="task-text"><b>Reklam İzlə #2</b><span>+ 0.0005 ₼</span></div>
                 </div>
-                <div class="task-status">0/25</div>
+                <div class="task-status">İzlə</div>
             </div>
         </div>
 
         <nav class="bottom-nav">
             <div class="nav-item active"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
-            <div class="nav-item"><i class="fa-solid fa-list-check"></i><span>İşlər</span></div>
-            <div class="nav-item"><i class="fa-solid fa-handshake-angle"></i><span>Dostlar</span></div>
-            <div class="nav-item special"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
+            <div class="nav-item"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
             <div class="nav-item"><i class="fa-solid fa-credit-card"></i><span>Cüzdan</span></div>
         </nav>
     </div>
 
     <script>
-        // Telegram WebApp obyektini başlat
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Ekranı tam aç
+        tg.expand();
 
-        // İstifadəçi məlumatlarını Telegram-dan al
+        // 1. Balansın idarə edilməsi (LocalStorage istifadəçi ID-sinə görə)
+        let userId = tg.initDataUnsafe?.user?.id || "default_user";
+        let userBalance = parseFloat(localStorage.getItem('balance_' + userId)) || 0.0;
+
+        function updateBalanceUI() {
+            document.getElementById('balance').innerText = userBalance.toFixed(4) + " ₼";
+        }
+
+        // İlk açılışda balansı göstər
+        updateBalanceUI();
+
+        // 2. Reklam funksiyası
+        function startAd(sdkId) {
+            // SDK-nı işə salma funksiyası (SDK-nın öz daxili funksiyası çağırılır)
+            if (typeof window[sdkId] === 'function') {
+                window[sdkId](); 
+                
+                // Reklam başladıqdan 15 saniyə sonra mükafat ver
+                tg.MainButton.setText("Reklam izlənilir...");
+                tg.MainButton.show();
+
+                setTimeout(() => {
+                    userBalance += 0.0005;
+                    localStorage.setItem('balance_' + userId, userBalance);
+                    updateBalanceUI();
+                    
+                    tg.MainButton.hide();
+                    tg.showAlert("Təbriklər! 0.0005 ₼ balansınıza əlavə edildi.");
+                }, 15000); // 15 saniyə gözləmə
+            } else {
+                alert("Reklam yüklənir, zəhmət olmasa bir az sonra yenidən yoxlayın.");
+            }
+        }
+
+        // 3. Telegram Profil Məlumatları
         const user = tg.initDataUnsafe?.user;
-
         if (user) {
-            // Adı və Soyadı yaz (məs: Elvin Məmmədov)
-            document.getElementById('user-name').innerText = `${user.first_name} ${user.last_name || ''}`;
-            
-            // Username yaz (məs: @elvin_dev)
-            document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : 'İstifadəçi';
-
-            // Əgər profil şəkli varsa göstər
+            document.getElementById('user-name').innerText = user.first_name;
+            document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : "İstifadəçi";
             if (user.photo_url) {
-                document.getElementById('user-photo').src = user.photo_url;
-                document.getElementById('user-photo').style.display = 'block';
+                const img = document.getElementById('user-photo');
+                img.src = user.photo_url;
+                img.style.display = 'block';
                 document.getElementById('default-icon').style.display = 'none';
             }
-        } else {
-            // Əgər Telegram daxilində deyilsə (test üçün)
-            document.getElementById('user-name').innerText = "Qonaq";
-            document.getElementById('user-tag').innerText = "@test_user";
         }
     </script>
 </body>
