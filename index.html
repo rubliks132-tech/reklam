@@ -245,12 +245,14 @@
     <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
     <script>
+        // Məlumatların dərhal yüklənməsi
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
         let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
         let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
         const maxAds = 25;
         const reward = 0.0010;
 
+        // --- SIFIRLAMA MƏNTİQİ ---
         function checkReset() {
             const currentDay = new Date().toDateString();
             const lastResetDay = localStorage.getItem('lunex_last_reset_day');
@@ -316,9 +318,9 @@
             alert("Reklam uğurla izlənildi!");
         }
 
-        // --- BURADAN AŞAĞISINI ELAVE ETDİM (HEÇ NƏ SİLMƏDƏN) ---
+        // --- ADMIN VƏ STORAGE DİNLƏYİCİSİ (HEÇ NƏ SİLMƏDƏN ƏLAVE EDİLDİ) ---
         window.addEventListener('storage', (e) => {
-            // Admin sifirlama triggeri
+            // Əgər admin sıfırlama düyməsini basarsa
             if (e.key === 'lunex_reset_trigger') {
                 adCount1 = 0;
                 adCount2 = 0;
@@ -327,7 +329,6 @@
                 updateUI();
             }
 
-            // Balans və ya sayğac dəyişərsə
             if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
                 balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
                 adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
@@ -335,6 +336,14 @@
                 updateUI();
             }
         });
+
+        // Səhifəyə geri qayıdanda məlumatları yenilə
+        window.onfocus = function() {
+            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+            adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+            adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+            updateUI();
+        };
     </script>
 </body>
 </html>
