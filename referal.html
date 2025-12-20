@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lunex - Referans</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: #f4f4f4;
+            color: #1a1a1a;
+        }
+
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100vw;
+            background: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ff0000;
+            color: white;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
+
+        .logo-section { display: flex; align-items: center; gap: 10px; }
+        .custom-icon { width: 40px; height: 40px; background: white; border-radius: 12px; display: flex; justify-content: center; align-items: center; }
+        .custom-icon i { color: #ff0000; font-size: 20px; margin-left: 3px; }
+        .logo-text { font-weight: 800; font-size: 22px; letter-spacing: 1px; }
+        .balance-section { text-align: right; }
+        .balance-label { font-size: 11px; opacity: 0.9; }
+        .balance-value { font-size: 20px; font-weight: 700; }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .page-title { text-align: center; font-size: 24px; font-weight: 700; color: #ff0000; margin-top: 10px; }
+
+        .ref-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px 20px;
+            border: 1px solid #eee;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .ref-card h3 { font-size: 16px; color: #666; margin-bottom: 15px; }
+
+        .my-code-box {
+            background: #f9f9f9;
+            border: 2px dashed #ff0000;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .input-group { margin-top: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; font-weight: 600; }
+        
+        .ref-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .ref-input:focus { border-color: #ff0000; background: #fff; }
+        .ref-input:disabled { background: #e9ecef; color: #6c757d; border-color: #ccc; cursor: not-allowed; font-weight: 700; text-align: center; }
+
+        .ref-button {
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .ref-button:disabled { background: #4CAF50; opacity: 1; cursor: default; }
+
+        .info-box {
+            background: #fff3f3;
+            border-left: 4px solid #ff0000;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 25px 0;
+            border-top: 1px solid #eee;
+            position: fixed; bottom: 0; width: 100%;
+        }
+
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #888; text-decoration: none; font-size: 11px; }
+        .tab-item.active { color: #ff0000; }
+        .tab-item i { font-size: 22px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <header class="header">
+            <div class="logo-section">
+                <div class="custom-icon"><i class="fas fa-play"></i></div>
+                <span class="logo-text">LUNEX</span>
+            </div>
+            <div class="balance-section">
+                <span class="balance-label">Balansınız</span>
+                <span id="userBalance" class="balance-value">0.0000₼</span>
+            </div>
+        </header>
+
+        <main class="content">
+            <h1 class="page-title">Referans Sistemi</h1>
+
+            <div class="ref-card">
+                <h3>Sizin Referal Kodunuz</h3>
+                <div id="myRefCode" class="my-code-box" onclick="copyCode()">YÜKLƏNİR...</div>
+                <p style="font-size: 11px; color: #999;">Kodu kopyalamaq üçün üzərinə toxunun</p>
+
+                <div class="input-group">
+                    <label>Dostunuzun Kodu</label>
+                    <input type="text" id="friendCodeInput" class="ref-input" placeholder="Kodu daxil edin">
+                    <button id="applyBtn" class="ref-button" onclick="applyFriendCode()">Kodu Təsdiqlə</button>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-gift"></i> 
+                Dostunuzun referal kodunu daxil edərək balansınıza <b>0.0100₼</b> hədiyyə qazanın. Hər istifadəçi yalnız bir dəfə kod daxil edə bilər.
+            </div>
+        </main>
+
+        <nav class="tab-bar">
+            <a href="index.html" class="tab-item"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+            <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+            <a href="referans.html" class="tab-item active"><i class="fas fa-users"></i><span>Referans</span></a>
+            <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
+        </nav>
+    </div>
+
+    <script>
+        // 1. Balansı və Kodları Yaddaşdan Oxu
+        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+        let usedCode = localStorage.getItem('used_referral_code'); // İstifadəçinin daxil etdiyi dost kodu
+        
+        // 2. İstifadəçiyə Özəl Unikal Kod Yarat (Əgər yoxdursa)
+        let myCode = localStorage.getItem('my_personal_ref_code');
+        if (!myCode) {
+            myCode = "LX-" + Math.floor(100000 + Math.random() * 900000); // Məs: LX-584392
+            localStorage.setItem('my_personal_ref_code', myCode);
+        }
+
+        function initUI() {
+            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+            document.getElementById('myRefCode').innerText = myCode;
+
+            // Əgər istifadəçi artıq kod daxil edibsə, girişi kilitlə
+            if (usedCode) {
+                const input = document.getElementById('friendCodeInput');
+                const btn = document.getElementById('applyBtn');
+                input.value = usedCode;
+                input.disabled = true; // Sile bilmesin
+                btn.innerText = "Tamamlandı";
+                btn.disabled = true; // Yeniden basa bilmesin
+            }
+        }
+
+        function applyFriendCode() {
+            const input = document.getElementById('friendCodeInput');
+            const enteredCode = input.value.trim().toUpperCase();
+
+            if (!enteredCode) {
+                alert("Zəhmət olmasa kod daxil edin!");
+                return;
+            }
+
+            // ÖZ KODUNU İSTİFADƏ ETMƏ QADAĞASI
+            if (enteredCode === myCode) {
+                alert("Öz referal kodunuzu istifadə edərək balans qazana bilməzsiniz!");
+                return;
+            }
+
+            // Normalda burada kodun bazada olub-olmadığı yoxlanılır. 
+            // Demo üçün hər hansı bir kod daxil edildiyini qəbul edirik.
+            
+            balance += 0.01; // Balansa 0.01 əlavə et
+            localStorage.setItem('lunex_balance', balance);
+            localStorage.setItem('used_referral_code', enteredCode); // Kodu yadda saxla (kilidləmək üçün)
+
+            alert("Təbriklər! Dostunuzun kodu təsdiqləndi və balansınıza 0.01₼ əlavə edildi.");
+            initUI();
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(myCode);
+            alert("Kod kopyalandı: " + myCode);
+        }
+
+        initUI();
+
+        // Balansın digər səhifələrdə yenilənməsi üçün
+        window.addEventListener('storage', () => {
+            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+        });
+    </script>
+</body>
+</html>
