@@ -10,11 +10,11 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f4f4f4; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: #f8f9fa; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Header - index.html ilə eyni */
+        /* HEADER (index.html ilə eyni ikonlu və səliqəli) */
         .header {
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -22,105 +22,101 @@
             color: white;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
         }
         .logo-section { display: flex; align-items: center; gap: 10px; }
-        .logo-text { font-weight: 800; font-size: 22px; letter-spacing: 1px; }
-        .balance-section { text-align: right; }
-        .balance-label { font-size: 11px; opacity: 0.9; display: block; }
-        .balance-value { font-size: 20px; font-weight: 700; }
+        .logo-icon-box { background: white; color: #ff0000; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .logo-text { font-weight: 900; font-size: 20px; letter-spacing: 1px; }
 
-        /* Mərkəzləşdirilmiş Qutu Sahəsi */
+        .balance-section { text-align: right; display: flex; flex-direction: column; }
+        .balance-label { font-size: 10px; text-transform: uppercase; opacity: 0.8; font-weight: 600; }
+        .balance-box { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+        .balance-value { font-size: 18px; font-weight: 800; }
+        .coin-icon { color: #FFD700; font-size: 16px; }
+
+        /* CONTENT - Qutu mərkəzlənib */
         .content { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; /* Tam mərkəz */
-            padding: 20px; 
-            gap: 15px;
-            margin-bottom: 60px;
-        }
-        
-        .limit-text { font-size: 16px; font-weight: 800; color: #ff0000; background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #ff0000; }
-
-        .box-container { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
-        .box-icon { font-size: 120px; color: #ff0000; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-        
-        .shake { animation: shake 0.5s infinite; }
-        @keyframes shake {
-            0%, 100% { transform: rotate(0); }
-            25% { transform: rotate(8deg); }
-            75% { transform: rotate(-8deg); }
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
         }
 
-        .status-text { font-size: 16px; font-weight: 700; color: #666; height: 20px; }
+        .limit-badge { background: #fff; color: #ff0000; padding: 6px 15px; border-radius: 50px; font-weight: 800; font-size: 14px; border: 2px solid #ff0000; margin-bottom: 10px; }
 
-        .open-btn { background: #ff0000; color: white; border: none; padding: 15px 50px; border-radius: 50px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.3); width: 85%; max-width: 300px; }
-        .open-btn:disabled { background: #ccc; box-shadow: none; }
+        .box-wrapper { position: relative; display: flex; align-items: center; justify-content: center; height: 160px; }
+        .box-icon { font-size: 130px; color: #ff0000; drop-shadow: 0 10px 10px rgba(0,0,0,0.1); }
+        
+        .shake { animation: boxShake 0.5s infinite; }
+        @keyframes boxShake {
+            0% { transform: rotate(0); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0); }
+        }
 
-        /* Ehtimal siyahısı - Tələb olunduğu kimi */
-        .reward-info-card { background: white; border-radius: 15px; padding: 15px; width: 90%; max-width: 350px; border: 1px solid #eee; text-align: center; font-size: 12px; }
-        .prob-box { margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px dashed #ddd; }
-        .prob-box:last-child { border: none; }
-        .percent { color: #ff0000; font-weight: 800; }
-        .amounts { color: #555; font-family: monospace; font-size: 11px; }
+        .open-btn { 
+            background: #ff0000; color: white; border: none; padding: 16px 0; border-radius: 15px; 
+            font-size: 18px; font-weight: 800; cursor: pointer; width: 100%; max-width: 280px;
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
+        }
+        .open-btn:disabled { background: #dcdcdc; box-shadow: none; color: #888; }
+
+        /* Ehtimal Mətni */
+        .info-card { background: white; border-radius: 15px; padding: 15px; width: 100%; max-width: 320px; border: 1px solid #eee; }
+        .info-line { margin-bottom: 8px; font-size: 11px; line-height: 1.4; text-align: center; }
+        .info-line b { color: #ff0000; display: block; margin-bottom: 2px; }
 
         /* Modal */
-        #rewardModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.4); z-index: 2000; text-align: center; width: 85%; }
-        .reward-amount { font-size: 35px; font-weight: 900; color: #4CAF50; margin: 15px 0; }
-
-        /* Tab Bar */
+        #rewardModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 9999; text-align: center; width: 85%; }
+        
         .tab-bar { background: #ffffff; display: flex; justify-content: space-around; padding: 12px 0 25px 0; border-top: 1px solid #eee; position: fixed; bottom: 0; width: 100%; }
         .tab-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #888; text-decoration: none; font-size: 11px; }
         .tab-item.active { color: #ff0000; }
-        .tab-item i { font-size: 22px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <div class="logo-section">
+            <div class="logo-icon-box"><i class="fas fa-play"></i></div>
             <span class="logo-text">LUNEX</span>
         </div>
         <div class="balance-section">
             <span class="balance-label">Balansınız</span>
-            <span id="userBalance" class="balance-value">0.0000₼</span>
+            <div class="balance-box">
+                <span id="userBalance" class="balance-value">0.0000</span>
+                <i class="fas fa-coins coin-icon"></i>
+            </div>
         </div>
     </header>
 
     <main class="content">
-        <div id="limitLabel" class="limit-text">Limit: 0 / 20</div>
-
-        <div id="statusLabel" class="status-text">Qutunu açmaq üçün butona bas</div>
+        <div id="limitLabel" class="limit-badge">Limit: 0 / 20</div>
         
-        <div id="boxContainer" class="box-container">
+        <div id="boxWrapper" class="box-wrapper">
             <i class="fas fa-gift box-icon"></i>
         </div>
 
-        <button id="giftBtn" class="open-btn" onclick="triggerAd()">QUTUNU AÇ</button>
+        <div id="statusText" style="font-weight: 700; color: #ff0000; height: 20px;"></div>
 
-        <div class="reward-info-card">
-            <div class="prob-box">
-                <div class="percent">100%-də 70% çıxa bilər:</div>
-                <div class="amounts">0.001 ; 0.0005 ; 0.002 ; 0.0009</div>
-            </div>
-            <div class="prob-box">
-                <div class="percent">100%-də 40% çıxa bilər:</div>
-                <div class="amounts">0.01 ; 0.23 ; 0.02 ; 0.10 ; 0.009</div>
-            </div>
-            <div class="prob-box">
-                <div class="percent">100%-də 5% çıxa bilər:</div>
-                <div class="amounts">1.00 ; 2.50 ; 1.75 ; 3.00</div>
-            </div>
+        <button id="giftBtn" class="open-btn" onclick="startAd()">QUTUNU AÇ</button>
+
+        <div class="info-card">
+            <div class="info-line"><b>100%de 70% çıxa bilər:</b> 0.001 ; 0.0005 ; 0.002 ; 0.0009</div>
+            <div class="info-line"><b>100%de 40% çıxa bilər:</b> 0.01 ; 0.23 ; 0.02 ; 0.10 ; 0.009</div>
+            <div class="info-line"><b>100%de 5% çıxa bilər:</b> 1.00 ; 2.50 ; 1.75 ; 3.00</div>
         </div>
     </main>
 
     <div id="rewardModal">
-        <i class="fas fa-coins" style="font-size: 50px; color: #FFD700;"></i>
-        <h2>Mükafatınız</h2>
-        <div id="rewardDisplay" class="reward-amount">0.0000₼</div>
-        <button class="open-btn" onclick="closeModal()" style="width: auto; padding: 10px 30px;">Bağla</button>
+        <i class="fas fa-gift" style="font-size: 50px; color: #ff0000;"></i>
+        <h2 style="margin: 15px 0 5px;">Təbriklər!</h2>
+        <div id="rewardValue" style="font-size: 32px; font-weight: 900; color: #2ecc71; margin-bottom: 20px;">0.0000₼</div>
+        <button class="open-btn" onclick="closeReward()">Balansa Əlavə Et</button>
     </div>
 
     <nav class="tab-bar">
@@ -132,80 +128,70 @@
 
     <script>
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-        let limit = parseInt(localStorage.getItem('box_limit')) || 0;
+        let limit = parseInt(localStorage.getItem('box_limit_today')) || 0;
         const maxLimit = 20;
+        const rewardPool = [0.001, 0.0005, 0.002, 0.0009];
 
-        // Qutudan çıxacaq REAl miqdarlar
-        const realRewards = [0.001, 0.0005, 0.002, 0.0009];
-        
-        function updateUI() {
-            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
-            document.getElementById('limitLabel').innerText = "Limit: " + limit + " / " + maxLimit;
-            
-            if (limit >= maxLimit) {
-                document.getElementById('giftBtn').disabled = true;
-                document.getElementById('giftBtn').innerText = "Limit Dolub";
-                document.getElementById('statusLabel').innerText = "Bu günlük limitiniz bitdi.";
+        function refreshUI() {
+            document.getElementById('userBalance').innerText = balance.toFixed(4);
+            document.getElementById('limitLabel').innerText = `Limit: ${limit} / ${maxLimit}`;
+            if(limit >= maxLimit) {
+                const btn = document.getElementById('giftBtn');
+                btn.disabled = true;
+                btn.innerText = "LİMİT BİTDİ";
             }
         }
 
-        function triggerAd() {
-            if (limit >= maxLimit) return;
-            
-            const btn = document.getElementById('giftBtn');
-            btn.disabled = true;
+        function startAd() {
+            if(limit >= maxLimit) return;
+            document.getElementById('giftBtn').disabled = true;
 
-            // SDK işə düşür
             if (typeof show_10354794 === 'function') {
-                show_10354794().then(() => startOpening()).catch(() => startOpening());
+                show_10354794().then(() => runCountdown()).catch(() => runCountdown());
             } else {
-                startOpening();
+                runCountdown();
             }
         }
 
-        function startOpening() {
-            const status = document.getElementById('statusLabel');
-            const box = document.getElementById('boxContainer');
+        function runCountdown() {
             let sec = 2;
-
+            const status = document.getElementById('statusText');
+            const box = document.getElementById('boxWrapper');
+            
             box.classList.add('shake');
-            status.innerText = "Açılır: " + sec + " san...";
+            status.innerText = `Qutu açılır: ${sec} san...`;
 
             const timer = setInterval(() => {
                 sec--;
-                if (sec > 0) {
-                    status.innerText = "Açılır: " + sec + " san...";
+                if(sec > 0) {
+                    status.innerText = `Qutu açılır: ${sec} san...`;
                 } else {
                     clearInterval(timer);
                     box.classList.remove('shake');
-                    finishOpening();
+                    status.innerText = "";
+                    showResult();
                 }
             }, 1000);
         }
 
-        function finishOpening() {
-            const randomAmt = realRewards[Math.floor(Math.random() * realRewards.length)];
-            
-            balance += randomAmt;
-            limit += 1; // Limiti artır
-            
+        function showResult() {
+            const win = rewardPool[Math.floor(Math.random() * rewardPool.length)];
+            balance += win;
+            limit += 1;
             localStorage.setItem('lunex_balance', balance);
-            localStorage.setItem('box_limit', limit);
+            localStorage.setItem('box_limit_today', limit);
             
-            document.getElementById('rewardDisplay').innerText = randomAmt.toFixed(4) + "₼";
+            document.getElementById('rewardValue').innerText = win.toFixed(4) + "₼";
             document.getElementById('rewardModal').style.display = 'block';
-            updateUI();
+            refreshUI();
         }
 
-        function closeModal() {
+        function closeReward() {
             document.getElementById('rewardModal').style.display = 'none';
-            if (limit < maxLimit) {
-                document.getElementById('giftBtn').disabled = false;
-                document.getElementById('statusLabel').innerText = "Yenidən açmaq olar";
-            }
+            if(limit < maxLimit) document.getElementById('giftBtn').disabled = false;
         }
 
-        updateUI();
+        refreshUI();
     </script>
 </body>
 </html>
