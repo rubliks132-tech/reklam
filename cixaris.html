@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lunex - Çıxarış</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: #f4f4f4;
+            color: #1a1a1a;
+        }
+
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100vw;
+            background: #ffffff;
+        }
+
+        /* Header - index.html ilə eyni */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ff0000;
+            color: white;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-icon i {
+            color: #ff0000;
+            font-size: 20px;
+            margin-left: 3px;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .balance-section {
+            text-align: right;
+        }
+
+        .balance-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .balance-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff0000;
+            margin-top: 10px;
+        }
+
+        /* Çıxarış Form Kartı */
+        .withdraw-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 25px;
+            padding: 25px 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #ff0000;
+            background: #fff;
+        }
+
+        .withdraw-button {
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .withdraw-button:active {
+            transform: scale(0.95);
+        }
+
+        .info-box {
+            background: #fff3f3;
+            border-left: 4px solid #ff0000;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Alt Menyu - index.html ilə eyni */
+        .tab-bar {
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 25px 0;
+            border-top: 1px solid #eee;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .tab-item.active {
+            color: #ff0000;
+        }
+
+        .tab-item i {
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <header class="header">
+            <div class="logo-section">
+                <div class="custom-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+                <span class="logo-text">LUNEX</span>
+            </div>
+            <div class="balance-section">
+                <span class="balance-label">Balansınız</span>
+                <span id="userBalance" class="balance-value">0.0000₼</span>
+            </div>
+        </header>
+
+        <main class="content">
+            <h1 class="page-title">Pul Çıxarışı</h1>
+
+            <div class="withdraw-card">
+                <div class="input-group">
+                    <label>Ödəniş Metodu</label>
+                    <select id="method">
+                        <option value="m10">m10</option>
+                        <option value="kart">Bank Kartı (Visa/Master)</option>
+                        <option value="emanat">eManat</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nömrə və ya Kart Nömrəsi</label>
+                    <input type="text" id="account" placeholder="Məs: 050XXXXXXX">
+                </div>
+
+                <div class="input-group">
+                    <label>Çıxarılacaq Məbləğ (₼)</label>
+                    <input type="number" id="amount" placeholder="Minimum: 10₼">
+                </div>
+
+                <button class="withdraw-button" onclick="requestWithdraw()">
+                    <i class="fas fa-paper-plane"></i> Sorğu Göndər
+                </button>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> 
+                Çıxarış sorğuları 24 saat ərzində yoxlanılır. Minimum çıxarış məbləği 10₼-dır. Zəhmət olmasa məlumatların düzgünlüyünə əmin olun.
+            </div>
+        </main>
+
+        <nav class="tab-bar">
+            <a href="index.html" class="tab-item"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+            <a href="cixaris.html" class="tab-item active"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-users"></i><span>Referans</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
+        </nav>
+    </div>
+
+    <script>
+        // Balansı yaddaşdan oxu
+        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+        document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+
+        function requestWithdraw() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const account = document.getElementById('account').value;
+
+            if (!account || !amount) {
+                alert("Zəhmət olmasa bütün xanaları doldurun!");
+                return;
+            }
+
+            if (amount < 10) {
+                alert("Minimum çıxarış məbləği 10₼-dır.");
+                return;
+            }
+
+            if (amount > balance) {
+                alert("Balansınızda kifayət qədər vəsait yoxdur!");
+                return;
+            }
+
+            // Burada normalda məlumat bazasına göndərilməlidir
+            alert("Sorğunuz qəbul edildi! Yoxlanıldıqdan sonra ödəniş ediləcək.");
+            
+            // Simulyasiya: Balansdan çıxılır
+            balance -= amount;
+            localStorage.setItem('lunex_balance', balance);
+            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+            document.getElementById('amount').value = "";
+            document.getElementById('account').value = "";
+        }
+    </script>
+</body>
+</html>
