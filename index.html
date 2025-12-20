@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunex App UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Ümumi tənzimləmələr */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Mobil konteyner */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Header hissəsi */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #444;
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .balance-area {
+            text-align: right;
+        }
+
+        .balance-label {
+            font-size: 10px;
+            color: #888;
+            display: block;
+        }
+
+        .balance-amount {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Ana kart sahəsi */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .counter {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sub-text {
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .btn-watch {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-watch:active {
+            transform: scale(0.98);
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .info-label {
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Alt menyu (Tab Bar) */
+        .bottom-nav {
+            background: #1a1a1a;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 10px;
+            border-top: 1px solid #333;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 15px;
+            margin-top: -8px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo-circle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 2L1 21h22L12 2zm0 4.5l7.5 13h-15L12 6.5z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">LUNEX</span>
+            </div>
+            <div class="balance-area">
+                <span class="balance-label">Balansınız</span>
+                <span class="balance-amount">0.3040₼</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <h1 class="welcome-text">Lunex-ə Xoş Gəlmisiniz</h1>
+
+            <div class="card">
+                <div class="counter">0/150</div>
+                <div class="sub-text">Bu Gün İzlənilən Reklamlar</div>
+                <button class="btn-watch">
+                    <i class="fas fa-play-circle"></i> Reklam İzlə
+                </button>
+            </div>
+
+            <div class="info-card">
+                <div class="info-label">Hər Reklam Üçün Qazanc</div>
+                <div class="info-value">0.0010₼</div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Ana Səhifə</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Çıxarış</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Referans</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Tapşırıqlar</span>
+            </a>
+        </nav>
+    </div>
+
+</body>
+</html>
