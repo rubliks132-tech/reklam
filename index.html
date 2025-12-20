@@ -245,6 +245,22 @@
     <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
     <script>
+        // --- SIFIRLAMA MƏNTİQİ (Yeni əlavə) ---
+        function checkReset() {
+            const currentDay = new Date().toDateString();
+            const lastResetDay = localStorage.getItem('lunex_last_reset_day');
+            
+            // Əgər gün dəyişibsə, reklam saylarını sıfırla
+            if (lastResetDay !== currentDay) {
+                localStorage.setItem('lunex_count1', 0);
+                localStorage.setItem('lunex_count2', 0);
+                localStorage.setItem('lunex_last_reset_day', currentDay);
+                return true;
+            }
+            return false;
+        }
+        checkReset(); 
+
         // Məlumatların saxlanılması və Yüklənməsi
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
         let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
@@ -274,7 +290,6 @@
                 if (typeof show_10354606 === 'function') {
                     show_10354606().then(() => { processReward(1); });
                 } else {
-                    // Test rejimi
                     setTimeout(() => { processReward(1); }, 1000); 
                 }
             } else {
@@ -287,7 +302,6 @@
                 if (typeof show_10354610 === 'function') {
                     show_10354610().then(() => { processReward(2); });
                 } else {
-                    // Test rejimi
                     setTimeout(() => { processReward(2); }, 1000);
                 }
             }
@@ -299,7 +313,6 @@
             
             balance += reward;
             
-            // Məlumatları yaddaşa yaz (Local Storage)
             localStorage.setItem('lunex_balance', balance);
             localStorage.setItem('lunex_count1', adCount1);
             localStorage.setItem('lunex_count2', adCount2);
@@ -309,6 +322,11 @@
         }
 
         function updateUI() {
+            // UI yenilənməzdən əvvəl məlumatları yenidən yaddaşdan oxu (Admin sıfırlaması ehtimalı üçün)
+            adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+            adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
             document.getElementById('count1').innerText = adCount1 + "/25";
             document.getElementById('count2').innerText = adCount2 + "/25";
@@ -316,16 +334,19 @@
             const btn1 = document.getElementById('btn1');
             const btn2 = document.getElementById('btn2');
 
-            // Limit yoxlaması
             btn1.disabled = (adCount1 >= maxAds);
             btn2.disabled = (adCount2 >= maxAds);
             
-            if(adCount1 >= maxAds) btn1.innerHTML = "Limit Doldu";
-            if(adCount2 >= maxAds) btn2.innerHTML = "Limit Doldu";
-
-            // Əgər limit dolmayıbsa, bir butona basıldıqda digəri də sönülü qalmalı idi (proses zamanı), 
-            // Amma proses bitdikdən sonra (updateUI çağırılanda) hər ikisi aktiv olur (əgər limit imkan verirsə).
+            btn1.innerHTML = (adCount1 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
+            btn2.innerHTML = (adCount2 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
         }
+
+        // Admin sıfırlamasını dinləmək üçün (Eyni brauzerdə admin.html istifadə olunarsa)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'lunex_count1' || e.key === 'lunex_count2') {
+                updateUI();
+            }
+        });
     </script>
 </body>
 </html>
