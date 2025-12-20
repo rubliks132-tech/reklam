@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lunex - Hədiyyə Qutusu</title>
+    <title>Lunex - Qutu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src='//libtl.com/sdk.js' data-zone='10354794' data-sdk='show_10354794'></script>
@@ -17,31 +17,36 @@
         .logo-text { font-weight: 800; font-size: 22px; }
         .balance-value { font-size: 20px; font-weight: 700; }
 
-        /* Qutu Sahəsi */
-        .content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 30px; }
+        /* Content */
+        .content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 20px; padding-bottom: 100px; }
         
-        .box-container { position: relative; width: 200px; height: 200px; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .status-text { font-size: 18px; font-weight: 700; color: #ff0000; height: 30px; }
+
+        /* Qutu Animasiyası */
+        .box-container { position: relative; width: 180px; height: 180px; }
+        .box-icon { font-size: 140px; color: #ff0000; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
         
-        .box-icon { font-size: 150px; color: #ff0000; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-        
-        /* Titrəmə Animasiyası */
         .shake { animation: shake 0.5s infinite; }
         @keyframes shake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            50% { transform: rotate(0eg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
+            0% { transform: rotate(0); }
+            25% { transform: rotate(8deg); }
+            50% { transform: rotate(0); }
+            75% { transform: rotate(-8deg); }
+            100% { transform: rotate(0); }
         }
 
-        .status-text { font-size: 18px; font-weight: 600; color: #666; text-align: center; height: 25px; }
-
-        .open-btn { background: #ff0000; color: white; border: none; padding: 15px 50px; border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.3); transition: 0.3s; }
+        .open-btn { background: #ff0000; color: white; border: none; padding: 16px 60px; border-radius: 50px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.3); transition: 0.3s; width: 80%; }
         .open-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
 
-        /* Mükafat Modal */
-        #rewardModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.2); z-index: 1000; text-align: center; width: 80%; }
-        .reward-amount { font-size: 35px; font-weight: 800; color: #4CAF50; margin: 15px 0; }
+        /* Mükafat siyahısı bölməsi */
+        .reward-info-card { background: white; border-radius: 20px; padding: 15px; width: 85%; border: 1px solid #eee; text-align: center; }
+        .reward-info-card h4 { font-size: 14px; color: #666; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .reward-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .reward-item { background: #fff5f5; color: #ff0000; padding: 5px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid #ffe0e0; }
+
+        /* Modal */
+        #rewardModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; box-shadow: 0 0 50px rgba(0,0,0,0.3); z-index: 1000; text-align: center; width: 85%; }
+        .reward-amount { font-size: 38px; font-weight: 900; color: #4CAF50; margin: 15px 0; }
 
         /* Tab Bar */
         .tab-bar { background: #ffffff; display: flex; justify-content: space-around; padding: 12px 0 25px 0; border-top: 1px solid #eee; position: fixed; bottom: 0; width: 100%; }
@@ -61,20 +66,31 @@
     </header>
 
     <main class="content">
-        <div id="statusLabel" class="status-text">Qutunu açmaq üçün butona bas</div>
+        <div id="statusLabel" class="status-text"></div>
         
         <div id="boxContainer" class="box-container">
             <i class="fas fa-gift box-icon"></i>
         </div>
 
-        <button id="giftBtn" class="open-btn" onclick="startProcess()">QUTUNU AÇ</button>
+        <button id="giftBtn" class="open-btn" onclick="triggerAd()">QUTUNU AÇ</button>
+
+        <div class="reward-info-card">
+            <h4>Çıxa biləcək miqdarlar:</h4>
+            <div class="reward-list">
+                <span class="reward-item">0.001₼</span>
+                <span class="reward-item">0.0005₼</span>
+                <span class="reward-item">0.002₼</span>
+                <span class="reward-item">0.01₼</span>
+                <span class="reward-item">0.0003₼</span>
+            </div>
+        </div>
     </main>
 
     <div id="rewardModal">
-        <i class="fas fa-check-circle" style="font-size: 50px; color: #4CAF50;"></i>
-        <h2 style="margin-top: 10px;">Təbriklər!</h2>
+        <i class="fas fa-gift" style="font-size: 50px; color: #ff0000;"></i>
+        <h2 style="margin-top: 10px;">Qazandınız!</h2>
         <div id="rewardDisplay" class="reward-amount">0.0000₼</div>
-        <button class="open-btn" onclick="closeModal()" style="padding: 10px 30px; font-size: 14px;">Tamam</button>
+        <button class="open-btn" onclick="closeModal()" style="padding: 12px 40px; font-size: 16px; width: auto;">Balansa əlavə et</button>
     </div>
 
     <nav class="tab-bar">
@@ -90,66 +106,63 @@
         
         document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
 
-        function startProcess() {
+        function triggerAd() {
             const btn = document.getElementById('giftBtn');
             btn.disabled = true;
-            
-            // 1. Reklamı Göstər
+
+            // SDK funksiyasını işə salırıq
             if (typeof show_10354794 === 'function') {
                 show_10354794().then(() => {
-                    handleRewardProcess();
-                }).catch(() => {
-                    // Reklam yüklenmese belə davam etsin (istəyə bağlı)
-                    handleRewardProcess();
+                    // Reklam bitdikdən sonra bura işləyir
+                    startCountdown();
+                }).catch((err) => {
+                    // Reklamda xəta olsa belə davam et (istifadəçi inciməsin)
+                    startCountdown();
                 });
             } else {
-                handleRewardProcess();
+                // SDK tapılmasa birbaşa animasiyaya keç
+                startCountdown();
             }
         }
 
-        function handleRewardProcess() {
+        function startCountdown() {
             const statusLabel = document.getElementById('statusLabel');
             const box = document.getElementById('boxContainer');
-            let countdown = 2;
+            let timeLeft = 2;
 
-            // 2 saniyəlik geri sayım və animasiya
-            statusLabel.innerText = "Qutu açılır: " + countdown;
             box.classList.add('shake');
+            statusLabel.innerText = "Açılır: " + timeLeft + " san...";
 
             const timer = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    statusLabel.innerText = "Qutu açılır: " + countdown;
+                timeLeft--;
+                if (timeLeft > 0) {
+                    statusLabel.innerText = "Açılır: " + timeLeft + " san...";
                 } else {
                     clearInterval(timer);
                     box.classList.remove('shake');
-                    openGift();
+                    statusLabel.innerText = "AÇILDI!";
+                    giveReward();
                 }
             }, 1000);
         }
 
-        function openGift() {
-            // Random Mükafat Seç
-            const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+        function giveReward() {
+            const randomAmt = rewards[Math.floor(Math.random() * rewards.length)];
             
-            // Balansı Yenilə
-            balance += randomReward;
+            balance += randomAmt;
             localStorage.setItem('lunex_balance', balance);
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
 
-            // Modal Göstər
-            document.getElementById('rewardDisplay').innerText = randomReward.toFixed(4) + "₼";
+            document.getElementById('rewardDisplay').innerText = randomAmt.toFixed(4) + "₼";
             document.getElementById('rewardModal').style.display = 'block';
-            document.getElementById('statusLabel').innerText = "Yeni hədiyyə gözlənilir...";
         }
 
         function closeModal() {
             document.getElementById('rewardModal').style.display = 'none';
             document.getElementById('giftBtn').disabled = false;
-            document.getElementById('statusLabel').innerText = "Qutunu açmaq üçün butona bas";
+            document.getElementById('statusLabel').innerText = "";
         }
 
-        // Digər səhifələrlə balans sinxronizasiyası
         window.addEventListener('storage', () => {
             balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
