@@ -72,7 +72,7 @@
             text-align: center;
         }
 
-        .ref-card h3 { font-size: 16px; color: #666; margin-bottom: 15px; }
+        .ref-card h3 { font-size: 14px; color: #666; margin-bottom: 15px; }
 
         .my-code-box {
             background: #f9f9f9;
@@ -160,43 +160,42 @@
         </header>
 
         <main class="content">
-            <h1 class="page-title">Referans Sistemi</h1>
+            <h1 class="page-title">Referans</h1>
 
             <div class="ref-card">
                 <h3>Sizin Referal Kodunuz</h3>
-                <div id="myRefCode" class="my-code-box" onclick="copyCode()">YÜKLƏNİR...</div>
-                <p style="font-size: 11px; color: #999;">Kodu kopyalamaq üçün üzərinə toxunun</p>
+                <div id="myRefCode" class="my-code-box" onclick="copyCode()">...</div>
+                <p style="font-size: 11px; color: #999;">Kopyalamaq üçün üzərinə toxunun</p>
 
-                <div class="input-group">
+                <div class="input-group" style="margin-top: 30px;">
                     <label>Dostunuzun Kodu</label>
-                    <input type="text" id="friendCodeInput" class="ref-input" placeholder="Kodu daxil edin">
-                    <button id="applyBtn" class="ref-button" onclick="applyFriendCode()">Kodu Təsdiqlə</button>
+                    <input type="text" id="friendCodeInput" class="ref-input" placeholder="Dəvət kodunu yazın">
+                    <button id="applyBtn" class="ref-button" onclick="applyFriendCode()">Təsdiqlə</button>
                 </div>
             </div>
 
             <div class="info-box">
-                <i class="fas fa-gift"></i> 
-                Dostunuzun referal kodunu daxil edərək balansınıza <b>0.0100₼</b> hədiyyə qazanın. Hər istifadəçi yalnız bir dəfə kod daxil edə bilər.
+                <i class="fas fa-info-circle"></i> 
+                Sizin kodunuzu daxil edən hər dostunuza görə <b>sizə 0.0100₼</b> balans veriləcək. Dostunuz isə sistemi aktivləşdirmiş sayılacaq.
             </div>
         </main>
 
         <nav class="tab-bar">
             <a href="index.html" class="tab-item"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
             <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
-            <a href="referans.html" class="tab-item active"><i class="fas fa-users"></i><span>Referans</span></a>
+            <a href="referal.html" class="tab-item active"><i class="fas fa-users"></i><span>Referans</span></a>
             <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
         </nav>
     </div>
 
     <script>
-        // 1. Balansı və Kodları Yaddaşdan Oxu
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-        let usedCode = localStorage.getItem('used_referral_code'); // İstifadəçinin daxil etdiyi dost kodu
+        let usedCode = localStorage.getItem('used_referral_code');
         
-        // 2. İstifadəçiyə Özəl Unikal Kod Yarat (Əgər yoxdursa)
+        // Unikal Kod Yarat
         let myCode = localStorage.getItem('my_personal_ref_code');
         if (!myCode) {
-            myCode = "LX-" + Math.floor(100000 + Math.random() * 900000); // Məs: LX-584392
+            myCode = "LX-" + Math.floor(100000 + Math.random() * 900000);
             localStorage.setItem('my_personal_ref_code', myCode);
         }
 
@@ -204,14 +203,13 @@
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
             document.getElementById('myRefCode').innerText = myCode;
 
-            // Əgər istifadəçi artıq kod daxil edibsə, girişi kilitlə
             if (usedCode) {
                 const input = document.getElementById('friendCodeInput');
                 const btn = document.getElementById('applyBtn');
                 input.value = usedCode;
-                input.disabled = true; // Sile bilmesin
-                btn.innerText = "Tamamlandı";
-                btn.disabled = true; // Yeniden basa bilmesin
+                input.disabled = true;
+                btn.innerText = "Sistem Aktivdir";
+                btn.disabled = true;
             }
         }
 
@@ -224,31 +222,31 @@
                 return;
             }
 
-            // ÖZ KODUNU İSTİFADƏ ETMƏ QADAĞASI
             if (enteredCode === myCode) {
-                alert("Öz referal kodunuzu istifadə edərək balans qazana bilməzsiniz!");
+                alert("Siz öz kodunuzu daxil edə bilməzsiniz!");
                 return;
             }
 
-            // Normalda burada kodun bazada olub-olmadığı yoxlanılır. 
-            // Demo üçün hər hansı bir kod daxil edildiyini qəbul edirik.
+            // MƏNTİQ DƏYİŞDİ:
+            // Dostun kodu daxil edəndə ONUN balansı artmır (yəni bu səhifədəki balance dəyişmir).
+            // Sadəcə xəbərdarlıq verilir ki, kod göndərildi.
             
-            balance += 0.01; // Balansa 0.01 əlavə et
-            localStorage.setItem('lunex_balance', balance);
-            localStorage.setItem('used_referral_code', enteredCode); // Kodu yadda saxla (kilidləmək üçün)
+            localStorage.setItem('used_referral_code', enteredCode); 
 
-            alert("Təbriklər! Dostunuzun kodu təsdiqləndi və balansınıza 0.01₼ əlavə edildi.");
+            alert("Kod təsdiqləndi! Bu kodu sizə verən şəxsə 0.01₼ balans göndərildi.");
+            
+            // Burada 'balance += 0.01' SİLİNDİ, çünki kodu daxil edən yox, sahibi qazanmalıdır.
+            
             initUI();
         }
 
         function copyCode() {
             navigator.clipboard.writeText(myCode);
-            alert("Kod kopyalandı: " + myCode);
+            alert("Referal kodunuz kopyalandı!");
         }
 
         initUI();
 
-        // Balansın digər səhifələrdə yenilənməsi üçün
         window.addEventListener('storage', () => {
             balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
