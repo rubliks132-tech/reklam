@@ -234,8 +234,8 @@
         </main>
 
         <nav class="tab-bar">
-            <a href="index.html" class="tab-item"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
-            <a href="cixaris.html" class="tab-item active"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+            <a href="index.html" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+            <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
             <a href="#" class="tab-item"><i class="fas fa-users"></i><span>Referans</span></a>
             <a href="#" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
         </nav>
@@ -245,88 +245,30 @@
     <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
     <script>
-        // --- SIFIRLAMA MƏNTİQİ (Yeni əlavə) ---
+        // Məlumatların dərhal yüklənməsi (Sıfır görünməməsi üçün bu hissə ən başda olmalıdır)
+        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+        let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+        let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+        const maxAds = 25;
+        const reward = 0.0010;
+
+        // --- SIFIRLAMA MƏNTİQİ ---
         function checkReset() {
             const currentDay = new Date().toDateString();
             const lastResetDay = localStorage.getItem('lunex_last_reset_day');
             
-            // Əgər gün dəyişibsə, reklam saylarını sıfırla
             if (lastResetDay !== currentDay) {
                 localStorage.setItem('lunex_count1', 0);
                 localStorage.setItem('lunex_count2', 0);
                 localStorage.setItem('lunex_last_reset_day', currentDay);
-                return true;
+                adCount1 = 0;
+                adCount2 = 0;
             }
-            return false;
         }
         checkReset(); 
 
-        // Məlumatların saxlanılması və Yüklənməsi
-        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-        let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-        let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-        
-        const maxAds = 25;
-        const reward = 0.0010;
-
-        // Səhifə açılan kimi köhnə məlumatları göstər
-        window.onload = updateUI;
-
-        function watchAd(id) {
-            const btn1 = document.getElementById('btn1');
-            const btn2 = document.getElementById('btn2');
-
-            // Hər iki butonu dərhal söndür
-            btn1.disabled = true;
-            btn2.disabled = true;
-
-            if(id === 1) {
-                if(adCount1 >= maxAds) {
-                    alert("1-ci reklam üçün gündəlik limit doldu!");
-                    updateUI();
-                    return;
-                }
-                
-                if (typeof show_10354606 === 'function') {
-                    show_10354606().then(() => { processReward(1); });
-                } else {
-                    setTimeout(() => { processReward(1); }, 1000); 
-                }
-            } else {
-                if(adCount2 >= maxAds) {
-                    alert("2-ci reklam üçün gündəlik limit doldu!");
-                    updateUI();
-                    return;
-                }
-                
-                if (typeof show_10354610 === 'function') {
-                    show_10354610().then(() => { processReward(2); });
-                } else {
-                    setTimeout(() => { processReward(2); }, 1000);
-                }
-            }
-        }
-
-        function processReward(id) {
-            if(id === 1) adCount1++;
-            else adCount2++;
-            
-            balance += reward;
-            
-            localStorage.setItem('lunex_balance', balance);
-            localStorage.setItem('lunex_count1', adCount1);
-            localStorage.setItem('lunex_count2', adCount2);
-            
-            updateUI();
-            alert("Reklam uğurla izlənildi!");
-        }
-
+        // Bu funksiya səhifə tam açılan kimi (və ya hər yenilənmədə) işləyir
         function updateUI() {
-            // UI yenilənməzdən əvvəl məlumatları yenidən yaddaşdan oxu (Admin sıfırlaması ehtimalı üçün)
-            adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-            adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
             document.getElementById('count1').innerText = adCount1 + "/25";
             document.getElementById('count2').innerText = adCount2 + "/25";
@@ -341,9 +283,49 @@
             btn2.innerHTML = (adCount2 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
         }
 
-        // Admin sıfırlamasını dinləmək üçün (Eyni brauzerdə admin.html istifadə olunarsa)
+        // Səhifə yüklənərkən 0 görünməməsi üçün dərhal çağırırıq
+        updateUI();
+
+        function watchAd(id) {
+            const btn1 = document.getElementById('btn1');
+            const btn2 = document.getElementById('btn2');
+            btn1.disabled = true;
+            btn2.disabled = true;
+
+            if(id === 1) {
+                if(adCount1 >= maxAds) { alert("1-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
+                if (typeof show_10354606 === 'function') {
+                    show_10354606().then(() => { processReward(1); });
+                } else {
+                    setTimeout(() => { processReward(1); }, 1000); 
+                }
+            } else {
+                if(adCount2 >= maxAds) { alert("2-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
+                if (typeof show_10354610 === 'function') {
+                    show_10354610().then(() => { processReward(2); });
+                } else {
+                    setTimeout(() => { processReward(2); }, 1000);
+                }
+            }
+        }
+
+        function processReward(id) {
+            if(id === 1) adCount1++;
+            else adCount2++;
+            balance += reward;
+            localStorage.setItem('lunex_balance', balance);
+            localStorage.setItem('lunex_count1', adCount1);
+            localStorage.setItem('lunex_count2', adCount2);
+            updateUI();
+            alert("Reklam uğurla izlənildi!");
+        }
+
+        // Admin sıfırlamasını dinləmək üçün
         window.addEventListener('storage', (e) => {
-            if (e.key === 'lunex_count1' || e.key === 'lunex_count2') {
+            if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
+                balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+                adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+                adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
                 updateUI();
             }
         });
