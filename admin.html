@@ -3,41 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunex Admin Panel</title>
+    <title>Lunex - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .admin-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
-        h1 { color: #ff0000; font-size: 24px; }
-        p { color: #666; margin-bottom: 25px; }
-        .reset-btn { background: #ff0000; color: white; border: none; padding: 15px 25px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        .reset-btn:active { transform: scale(0.95); }
-        .status { margin-top: 15px; font-size: 14px; color: green; display: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .admin-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #ff0000;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .reset-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+        .reset-btn i {
+            font-size: 18px;
+        }
+        .status-msg {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #2ecc71;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="admin-card">
-        <h1>Lunex Admin</h1>
-        <p>Aşağıdakı düyməni basdıqda bütün istifadəçilərin gündəlik reklam limitləri (0/25) sıfırlanacaq.</p>
+        <i class="fas fa-user-shield" style="font-size: 50px; color: #ff0000; margin-bottom: 15px;"></i>
+        <h1>Admin Panel</h1>
+        <p>Aşağıdakı düyməyə basaraq bütün istifadəçilərin reklam limitlərini (0/25) sıfırlaya bilərsiniz. <b>Balanslar silinməyəcək.</b></p>
         
-        <button class="reset-btn" onclick="resetAllUsers()">Reklamları Sıfırla</button>
-        <div id="statusMsg" class="status">Uğurla sıfırlandı!</div>
+        <button class="reset-btn" onclick="resetUserAds()">
+            <i class="fas fa-sync-alt"></i> Reklamları Sıfırla
+        </button>
+
+        <div id="status" class="status-msg">Reklamlar uğurla sıfırlandı!</div>
     </div>
 
     <script>
-        function resetAllUsers() {
-            // Yeni bir sıfırlama kodu (məsələn: indiki vaxtın rəqəmi) yaradırıq
-            const resetToken = Date.now();
+        function resetUserAds() {
+            // Sənin index.html-dəki window.addEventListener('storage') bunu tutacaq
+            localStorage.setItem('lunex_reset_trigger', Date.now());
+
+            // Eyni brauzerdə test edirsənsə, birbaşa sayğacları da sıfırlayaq
+            localStorage.setItem('lunex_count1', 0);
+            localStorage.setItem('lunex_count2', 0);
+            localStorage.setItem('box_limit_today', 0); // Qutu limitini də sıfırlayır
+
+            // Bildiriş göstər
+            const status = document.getElementById('status');
+            status.style.display = 'block';
             
-            // Bunu yaddaşa yazırıq (Sizin brauzerinizdə qalır, amma bunu real bazaya göndərmək lazımdır)
-            // Lokal versiya üçün: Bu kodu istifadəçilərlə paylaşan bir mexanizm lazımdır.
-            // ŞİMDİLİK: Bu kodu kopyalayıb istifadəçi koduna inteqrasiya edirik.
-            localStorage.setItem('admin_reset_version', resetToken);
-            
-            document.getElementById('statusMsg').style.display = 'block';
-            setTimeout(() => { document.getElementById('statusMsg').style.display = 'none'; }, 3000);
-            
-            alert("Reklam sıfırlama əmri verildi. (Qeyd: Real bazasız bu ancaq sizin brauzerdə işləyir. Bütün istifadəçilər üçün işləməsi üçün aşağıdakı təlimata baxın)");
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
