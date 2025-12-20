@@ -241,44 +241,41 @@
         </nav>
     </div>
 
-    <script id="sdk1" src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
-    <script id="sdk2" src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
+    <script src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
+    <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
     <script>
-        // Məlumatların saxlanılması
-        let balance = 0.0;
-        let adCount1 = 0;
-        let adCount2 = 0;
+        // Məlumatların saxlanılması və Yüklənməsi
+        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+        let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+        let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+        
         const maxAds = 25;
         const reward = 0.0010;
+
+        // Səhifə açılan kimi köhnə məlumatları göstər
+        window.onload = updateUI;
 
         function watchAd(id) {
             const btn1 = document.getElementById('btn1');
             const btn2 = document.getElementById('btn2');
 
-            // Eyni anda basılmasın deyə butonları müvəqqəti söndürürük
+            // Hər iki butonu dərhal söndür
             btn1.disabled = true;
             btn2.disabled = true;
 
-            // Hansı butona basılıbsa müvafiq SDK-nı işə sal
             if(id === 1) {
                 if(adCount1 >= maxAds) {
                     alert("1-ci reklam üçün gündəlik limit doldu!");
                     updateUI();
                     return;
                 }
-                // SDK funksiyasını çağır (show_ + data-zone)
+                
                 if (typeof show_10354606 === 'function') {
-                    show_10354606().then(() => {
-                        adCount1++;
-                        balance += reward;
-                        completeAd();
-                    });
+                    show_10354606().then(() => { processReward(1); });
                 } else {
-                    // Test üçün (SDK yüklənməzsə):
-                    adCount1++;
-                    balance += reward;
-                    setTimeout(completeAd, 1000); 
+                    // Test rejimi
+                    setTimeout(() => { processReward(1); }, 1000); 
                 }
             } else {
                 if(adCount2 >= maxAds) {
@@ -286,24 +283,29 @@
                     updateUI();
                     return;
                 }
+                
                 if (typeof show_10354610 === 'function') {
-                    show_10354610().then(() => {
-                        adCount2++;
-                        balance += reward;
-                        completeAd();
-                    });
+                    show_10354610().then(() => { processReward(2); });
                 } else {
-                    // Test üçün:
-                    adCount2++;
-                    balance += reward;
-                    setTimeout(completeAd, 1000);
+                    // Test rejimi
+                    setTimeout(() => { processReward(2); }, 1000);
                 }
             }
         }
 
-        function completeAd() {
+        function processReward(id) {
+            if(id === 1) adCount1++;
+            else adCount2++;
+            
+            balance += reward;
+            
+            // Məlumatları yaddaşa yaz (Local Storage)
+            localStorage.setItem('lunex_balance', balance);
+            localStorage.setItem('lunex_count1', adCount1);
+            localStorage.setItem('lunex_count2', adCount2);
+            
             updateUI();
-            alert("Reklam uğurla izlənildi! Qazanc balansınıza əlavə edildi.");
+            alert("Reklam uğurla izlənildi!");
         }
 
         function updateUI() {
@@ -311,16 +313,18 @@
             document.getElementById('count1').innerText = adCount1 + "/25";
             document.getElementById('count2').innerText = adCount2 + "/25";
 
-            // Butonları yenidən aktiv et
             const btn1 = document.getElementById('btn1');
             const btn2 = document.getElementById('btn2');
 
+            // Limit yoxlaması
             btn1.disabled = (adCount1 >= maxAds);
             btn2.disabled = (adCount2 >= maxAds);
             
-            // Limit dolduqda yazını dəyiş
             if(adCount1 >= maxAds) btn1.innerHTML = "Limit Doldu";
             if(adCount2 >= maxAds) btn2.innerHTML = "Limit Doldu";
+
+            // Əgər limit dolmayıbsa, bir butona basıldıqda digəri də sönülü qalmalı idi (proses zamanı), 
+            // Amma proses bitdikdən sonra (updateUI çağırılanda) hər ikisi aktiv olur (əgər limit imkan verirsə).
         }
     </script>
 </body>
