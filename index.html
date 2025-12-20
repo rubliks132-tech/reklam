@@ -16,7 +16,7 @@
 
         body, html {
             height: 100%;
-            background-color: #f4f4f4; /* Açıq boz arxa fon */
+            background-color: #f4f4f4;
             color: #1a1a1a;
         }
 
@@ -25,16 +25,15 @@
             flex-direction: column;
             min-height: 100vh;
             width: 100vw;
-            background: #ffffff; /* Ana konteyner ağ */
+            background: #ffffff;
         }
 
-        /* Header */
         .header {
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #ff0000; /* Qırmızı Header */
+            background: #ff0000;
             color: white;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
@@ -47,7 +46,6 @@
             gap: 10px;
         }
 
-        /* Yeni İkon Dizaynı (Şəkilə uyğun) */
         .custom-icon {
             width: 40px;
             height: 40px;
@@ -56,7 +54,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
 
         .custom-icon i {
@@ -85,14 +82,15 @@
             font-weight: 700;
         }
 
-        /* Content */
         .content {
             flex: 1;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            background-color: #f8f9fa; /* Çox açıq boz */
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            padding-bottom: 100px;
         }
 
         .welcome-title {
@@ -103,7 +101,6 @@
             margin-top: 10px;
         }
 
-        /* Kartlar */
         .main-card {
             background: white;
             border: 1px solid #eee;
@@ -125,7 +122,6 @@
             margin-bottom: 25px;
         }
 
-        /* Qırmızı Düymə */
         .watch-button {
             background-color: #ff0000;
             color: #ffffff;
@@ -143,12 +139,11 @@
             transition: 0.3s;
         }
 
-        .watch-button:active {
-            transform: scale(0.95);
-            background-color: #cc0000;
+        .watch-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
 
-        /* Qazanc Kartı - Boz stil */
         .earnings-card {
             background: #f1f1f1;
             border-radius: 20px;
@@ -167,13 +162,15 @@
             color: #ff0000;
         }
 
-        /* Alt Menyu */
         .tab-bar {
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             padding: 12px 0 25px 0;
             border-top: 1px solid #eee;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
 
         .tab-item {
@@ -207,7 +204,7 @@
             </div>
             <div class="balance-section">
                 <span class="balance-label">Balansınız</span>
-                <span class="balance-value">0.3040₼</span>
+                <span id="userBalance" class="balance-value">0.0000₼</span>
             </div>
         </header>
 
@@ -215,17 +212,17 @@
             <h1 class="welcome-title">Lunex-ə Xoş Gəlmisiniz</h1>
 
             <div class="main-card">
-                <div class="counter-big">0/25</div>
+                <div id="count1" class="counter-big">0/25</div>
                 <p class="counter-desc">Gündəlik Reklam Limiti (1)</p>
-                <button class="watch-button">
+                <button id="btn1" class="watch-button" onclick="watchAd(1)">
                     <i class="fas fa-play-circle"></i> Reklam İzlə
                 </button>
             </div>
 
             <div class="main-card">
-                <div class="counter-big">0/25</div>
+                <div id="count2" class="counter-big">0/25</div>
                 <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
-                <button class="watch-button">
+                <button id="btn2" class="watch-button" onclick="watchAd(2)">
                     <i class="fas fa-play-circle"></i> Reklam İzlə
                 </button>
             </div>
@@ -237,24 +234,94 @@
         </main>
 
         <nav class="tab-bar">
-            <a href="#" class="tab-item active">
-                <i class="fas fa-home"></i>
-                <span>Ana Səhifə</span>
-            </a>
-            <a href="#" class="tab-item">
-                <i class="fas fa-wallet"></i>
-                <span>Çıxarış</span>
-            </a>
-            <a href="#" class="tab-item">
-                <i class="fas fa-users"></i>
-                <span>Referans</span>
-            </a>
-            <a href="#" class="tab-item">
-                <i class="fas fa-tasks"></i>
-                <span>Tapşırıqlar</span>
-            </a>
+            <a href="#" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-users"></i><span>Referans</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
         </nav>
     </div>
 
+    <script id="sdk1" src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
+    <script id="sdk2" src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
+
+    <script>
+        // Məlumatların saxlanılması
+        let balance = 0.0;
+        let adCount1 = 0;
+        let adCount2 = 0;
+        const maxAds = 25;
+        const reward = 0.0010;
+
+        function watchAd(id) {
+            const btn1 = document.getElementById('btn1');
+            const btn2 = document.getElementById('btn2');
+
+            // Eyni anda basılmasın deyə butonları müvəqqəti söndürürük
+            btn1.disabled = true;
+            btn2.disabled = true;
+
+            // Hansı butona basılıbsa müvafiq SDK-nı işə sal
+            if(id === 1) {
+                if(adCount1 >= maxAds) {
+                    alert("1-ci reklam üçün gündəlik limit doldu!");
+                    updateUI();
+                    return;
+                }
+                // SDK funksiyasını çağır (show_ + data-zone)
+                if (typeof show_10354606 === 'function') {
+                    show_10354606().then(() => {
+                        adCount1++;
+                        balance += reward;
+                        completeAd();
+                    });
+                } else {
+                    // Test üçün (SDK yüklənməzsə):
+                    adCount1++;
+                    balance += reward;
+                    setTimeout(completeAd, 1000); 
+                }
+            } else {
+                if(adCount2 >= maxAds) {
+                    alert("2-ci reklam üçün gündəlik limit doldu!");
+                    updateUI();
+                    return;
+                }
+                if (typeof show_10354610 === 'function') {
+                    show_10354610().then(() => {
+                        adCount2++;
+                        balance += reward;
+                        completeAd();
+                    });
+                } else {
+                    // Test üçün:
+                    adCount2++;
+                    balance += reward;
+                    setTimeout(completeAd, 1000);
+                }
+            }
+        }
+
+        function completeAd() {
+            updateUI();
+            alert("Reklam uğurla izlənildi! Qazanc balansınıza əlavə edildi.");
+        }
+
+        function updateUI() {
+            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+            document.getElementById('count1').innerText = adCount1 + "/25";
+            document.getElementById('count2').innerText = adCount2 + "/25";
+
+            // Butonları yenidən aktiv et
+            const btn1 = document.getElementById('btn1');
+            const btn2 = document.getElementById('btn2');
+
+            btn1.disabled = (adCount1 >= maxAds);
+            btn2.disabled = (adCount2 >= maxAds);
+            
+            // Limit dolduqda yazını dəyiş
+            if(adCount1 >= maxAds) btn1.innerHTML = "Limit Doldu";
+            if(adCount2 >= maxAds) btn2.innerHTML = "Limit Doldu";
+        }
+    </script>
 </body>
 </html>
