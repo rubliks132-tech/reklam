@@ -1,0 +1,789 @@
+<?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+session_start();
+
+// Xəta log funksiyası
+function logError($error, $function = '', $line = '', $chatId = '') {
+    $logData = [
+        'timestamp' => date('Y-m-d H:i:s'),
+        'error' => $error,
+        'function' => $function,
+        'line' => $line,
+        'chat_id' => $chatId
+    ];
+    
+    $logFile = 'error_logs.json';
+    $logs = file_exists($logFile) ? json_decode(file_get_contents($logFile), true) ?? [] : [];
+    $logs[] = $logData;
+    $logs = array_slice($logs, -1000);
+    file_put_contents($logFile, json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    return $logData;
+}
+
+// Database bağlantısı
+$servername = "localhost";
+$username = "pantamue_users";
+$password = "BTD2HS39ycgjwb.";
+$dbname = "pantamue_date";
+
+try {
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        throw new Exception("Database error: " . $conn->connect_error);
+    }
+    $conn->set_charset("utf8mb4");
+} catch (Exception $e) {
+    die(json_encode(['success' => false, 'message' => 'Sistem xətası: ' . $e->getMessage()]));
+}
+
+// lunex_bot cədvəlini avtomatik yarat/yenilə
+$createTableSQL = "CREATE TABLE IF NOT EXISTS lunex_bot (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    tg_id VARCHAR(50) UNIQUE NOT NULL,
+    full_name VARCHAR(255) DEFAULT 'İstifadəçi',
+    invited_by VARCHAR(50) DEFAULT NULL,
+    wallet_balance DECIMAL(10,4) DEFAULT 0.0000,
+    referral_total INT DEFAULT 0,
+    ads_watched_today INT DEFAULT 0,
+    bonus_ads_watched INT DEFAULT 0,
+    membership_tier INT DEFAULT 1,
+    energy_points INT DEFAULT 100,
+    referral_code VARCHAR(50) UNIQUE,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_tg_id (tg_id),
+    INDEX idx_invited_by (invited_by),
+    INDEX idx_referral (referral_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+if (!$conn->query($createTableSQL)) {
+    logError("Cədvəl yaradılmadı: " . $conn->error, 'CREATE TABLE', __LINE__);
+}
+
+$conn->query("ALTER TABLE lunex_bot ADD COLUMN IF NOT EXISTS referral_code VARCHAR(50) UNIQUE");
+$conn->query("ALTER TABLE lunex_bot ADD COLUMN IF NOT EXISTS ads_watched_today INT DEFAULT 0");
+
+// Reklam mükafatı - HƏR REKLAM ÜÇÜN 0.002 AZN (təqribən $0.001)
+$adRewardAZN = 0.001;
+$maxDailyAds = 150;
+
+// Balans formatlaması (AZN)
+function formatBalance($amount) {
+    if ($amount < 0.001) {
+        return '0.00₼';
+    }
+    return number_format($amount, 4, '.', '') . '₼';
+}
+
+// Unikal referral kodu yaratma
+function generateReferralCode($tgId) {
+    return 'ref_' . $tgId;
+}
+
+// Yeni istifadəçi yarat
+function createNewUser($conn, $tgId, $fullName = 'İstifadəçi') {
+    try {
+        $referralCode = generateReferralCode($tgId);
+        $stmt = $conn->prepare("INSERT INTO lunex_bot (tg_id, full_name, wallet_balance, referral_total, ads_watched_today, bonus_ads_watched, membership_tier, energy_points, referral_code, registration_date) VALUES (?, ?, 0.0000, 0, 0, 0, 1, 100, ?, NOW())");
+        $stmt->bind_param('sss', $tgId, $fullName, $referralCode);
+        $stmt->execute();
+        $stmt->close();
+        return [
+            'tg_id' => $tgId,
+            'full_name' => $fullName,
+            'wallet_balance' => 0.0000,
+            'referral_total' => 0,
+            'ads_watched_today' => 0,
+            'bonus_ads_watched' => 0,
+            'membership_tier' => 1,
+            'energy_points' => 100,
+            'referral_code' => $referralCode
+        ];
+    } catch (Exception $e) {
+        logError($e->getMessage(), 'createNewUser', __LINE__, $tgId);
+        throw $e;
+    }
+}
+
+// User ID
+$tgId = $_GET['chatId'] ?? $_GET['userId'] ?? $_GET['tg_id'] ?? null;
+
+if (!$tgId || $tgId === 'guest') {
+    $userData = [
+        'tg_id' => 'GUEST',
+        'full_name' => 'Qonaq İstifadəçi',
+        'wallet_balance' => 0.0000,
+        'referral_total' => 0,
+        'ads_watched_today' => 0,
+        'bonus_ads_watched' => 0,
+        'membership_tier' => 1,
+        'energy_points' => 100,
+        'referral_code' => 'ref_guest'
+    ];
+    $tgId = 'GUEST';
+} else {
+    try {
+        $stmt = $conn->prepare("SELECT tg_id, full_name, wallet_balance, referral_total, ads_watched_today, bonus_ads_watched, membership_tier, energy_points, referral_code FROM lunex_bot WHERE tg_id = ?");
+        $stmt->bind_param('s', $tgId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $userData = $result->fetch_assoc();
+            
+            if (!isset($userData['referral_code']) || empty($userData['referral_code'])) {
+                $userData['referral_code'] = generateReferralCode($tgId);
+                $conn->query("UPDATE lunex_bot SET referral_code = '{$userData['referral_code']}' WHERE tg_id = '$tgId'");
+            }
+            if (!isset($userData['ads_watched_today'])) {
+                $userData['ads_watched_today'] = 0;
+            }
+        } else {
+            $userData = createNewUser($conn, $tgId, 'İstifadəçi_' . $tgId);
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        logError($e->getMessage(), 'User Fetch', __LINE__, $tgId);
+        $userData = [
+            'tg_id' => $tgId,
+            'full_name' => 'İstifadəçi_' . $tgId,
+            'wallet_balance' => 0.0000,
+            'referral_total' => 0,
+            'ads_watched_today' => 0,
+            'bonus_ads_watched' => 0,
+            'membership_tier' => 1,
+            'energy_points' => 100,
+            'referral_code' => generateReferralCode($tgId)
+        ];
+    }
+}
+
+// Reklam izləmə
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['watch_ad'])) {
+    header('Content-Type: application/json');
+    
+    if ($tgId === 'GUEST') {
+        echo json_encode(['success' => false, 'message' => 'Qonaq istifadəçi reklam izləyə bilməz']);
+        exit;
+    }
+    
+    try {
+        $conn->begin_transaction();
+        
+        $stmt = $conn->prepare("SELECT wallet_balance, ads_watched_today FROM lunex_bot WHERE tg_id = ? FOR UPDATE");
+        $stmt->bind_param('s', $tgId);
+        $stmt->execute();
+        $user = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        
+        if (!$user) {
+            $conn->rollback();
+            echo json_encode(['success' => false, 'message' => 'İstifadəçi tapılmadı']);
+            exit;
+        }
+        
+        $adsWatched = intval($user['ads_watched_today']);
+        
+        if ($adsWatched >= $maxDailyAds) {
+            $conn->rollback();
+            echo json_encode(['success' => false, 'message' => 'Günlük limit doldu']);
+            exit;
+        }
+        
+        $currentBalanceAZN = floatval($user['wallet_balance']);
+        $newBalanceAZN = $currentBalanceAZN + $adRewardAZN;
+        
+        $newAdsWatched = $adsWatched + 1;
+        
+        $updateStmt = $conn->prepare("UPDATE lunex_bot SET wallet_balance = ?, ads_watched_today = ?, last_activity = NOW() WHERE tg_id = ?");
+        $updateStmt->bind_param('dis', $newBalanceAZN, $newAdsWatched, $tgId);
+        
+        if (!$updateStmt->execute()) {
+            $conn->rollback();
+            logError("Update failed: " . $updateStmt->error, 'Watch Ad', __LINE__, $tgId);
+            echo json_encode(['success' => false, 'message' => 'Yeniləmə xətası']);
+            exit;
+        }
+        
+        $updateStmt->close();
+        $conn->commit();
+        
+        echo json_encode([
+            'success' => true,
+            'balance_display' => $newBalanceAZN,
+            'ads_watched' => $newAdsWatched,
+            'reward_display' => $adRewardAZN,
+            'message' => 'Təbriklər! Qazandınız ' . formatBalance($adRewardAZN)
+        ]);
+    } catch (Exception $e) {
+        $conn->rollback();
+        logError($e->getMessage(), 'Watch Ad', __LINE__, $tgId);
+        echo json_encode(['success' => false, 'message' => 'Xəta baş verdi: ' . $e->getMessage()]);
+    }
+    exit;
+}
+
+$balanceAZN = floatval($userData['wallet_balance']);
+$formattedBalance = formatBalance($balanceAZN);
+
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunex - Ana Səhifə</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #ffffff;
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    padding: 15px 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.top-bar-content {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffffff, #b8b8b8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    animation: pulse-logo 2s ease-in-out infinite;
+}
+
+@keyframes pulse-logo {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+    }
+}
+
+.logo-icon i {
+    font-size: 24px;
+    color: #1a1a1a;
+}
+
+.app-name {
+    font-size: 22px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ffffff, #b8b8b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+.balance-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.balance-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.balance-amount {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.main-content {
+    position: fixed;
+    top: 85px;
+    bottom: 85px;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+.welcome-card {
+    background: rgba(40, 40, 40, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 35px 25px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.ad-card {
+    background: rgba(50, 50, 50, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.ad-stats {
+    margin-bottom: 20px;
+}
+
+.ad-stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.ad-stat-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.watch-ad-btn {
+    background: linear-gradient(135deg, #ffffff, #d0d0d0);
+    border: none;
+    border-radius: 15px;
+    padding: 18px;
+    width: 100%;
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.watch-ad-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.watch-ad-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.watch-ad-btn i {
+    font-size: 20px;
+}
+
+.progress-bar {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffffff, #b8b8b8);
+    transition: width 0.5s;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.reward-info {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(50, 50, 50, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.reward-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.reward-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 0;
+    z-index: 1000;
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 15px;
+    transition: all 0.3s;
+    flex: 1;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item i {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s;
+}
+
+.nav-item.active i {
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+.nav-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.nav-item.active .nav-label {
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.notification {
+    position: fixed;
+    top: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40, 40, 40, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px 25px;
+    color: #ffffff;
+    z-index: 2000;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s;
+    max-width: 90%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.notification.show {
+    opacity: 1;
+}
+
+.notification.success {
+    border-color: #ffffff;
+}
+
+.notification.error {
+    border-color: #888888;
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .ad-stat-value {
+        font-size: 32px;
+    }
+    
+    .welcome-title {
+        font-size: 24px;
+    }
+}
+    </style>
+    <script src='//libtl.com/sdk.js' data-zone='10290280' data-sdk='show_10290280'></script>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="top-bar-content">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <div class="app-name">LUNEX</div>
+        </div>
+        
+        <div class="balance-section">
+            <div class="balance-label">Balansınız</div>
+            <div class="balance-amount" id="topBalance"><?php echo $formattedBalance; ?></div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="welcome-card">
+        <div class="welcome-title">Lunex-ə Xoş Gəlmisiniz</div>
+        
+        <div class="ad-card">
+            <div class="ad-stats">
+                <div class="ad-stat-value" id="adsWatched"><?php echo $userData['ads_watched_today']; ?>/<?php echo $maxDailyAds; ?></div>
+                <div class="ad-stat-label">Bu Gün İzlənilən Reklamlar</div>
+            </div>
+            <button class="watch-ad-btn" id="watchAdBtn" onclick="watchAd()" <?php echo ($userData['ads_watched_today'] >= $maxDailyAds) ? 'disabled' : ''; ?>>
+                <i class="fas fa-play-circle"></i>
+                <span>Reklam İzlə</span>
+            </button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: <?php echo ($userData['ads_watched_today'] / $maxDailyAds * 100); ?>%"></div>
+            </div>
+        </div>
+
+        <div class="reward-info">
+            <div class="reward-label">Hər Reklam Üçün Qazanc</div>
+            <div class="reward-value"><?php echo formatBalance($adRewardAZN); ?></div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-items">
+        <div class="nav-item active" onclick="navigate('home.php')">
+            <i class="fas fa-house"></i>
+            <span class="nav-label">Ana Səhifə</span>
+        </div>
+        <div class="nav-item" onclick="navigate('withdraw.php')">
+            <i class="fas fa-wallet"></i>
+            <span class="nav-label">Çıxarış</span>
+        </div>
+        <div class="nav-item" onclick="navigate('referrals.php')">
+            <i class="fas fa-user-group"></i>
+            <span class="nav-label">Referans</span>
+        </div>
+        <div class="nav-item" onclick="navigate('tasks.php')">
+            <i class="fas fa-list-check"></i>
+            <span class="nav-label">Tapşırıqlar</span>
+        </div>
+    </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+    const tgId = '<?php echo $tgId; ?>';
+    const maxDailyAds = <?php echo $maxDailyAds; ?>;
+    
+    let isWatchingAd = false;
+    let adWatchTimeout = null;
+
+    function formatBalance(amount) {
+        if (amount < 0.001) {
+            return '0.00₼';
+        }
+        return amount.toFixed(4) + '₼';
+    }
+
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    function updateBalance(balance) {
+        document.getElementById('topBalance').textContent = formatBalance(balance);
+    }
+
+    function lockButton() {
+        const btn = document.getElementById('watchAdBtn');
+        btn.disabled = true;
+        isWatchingAd = true;
+    }
+
+    function unlockButton() {
+        const btn = document.getElementById('watchAdBtn');
+        const adsWatched = parseInt(document.getElementById('adsWatched').textContent.split('/')[0]);
+        
+        if (adsWatched < maxDailyAds) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-play-circle"></i><span>Reklam İzlə</span>';
+        }
+        
+        isWatchingAd = false;
+    }
+
+    function watchAd() {
+        if (isWatchingAd) {
+            showNotification('Zəhmət olmasa gözləyin...', 'error');
+            return;
+        }
+        
+        if (tgId === 'GUEST') {
+            showNotification('Qonaq istifadəçilər reklam izləyə bilməz', 'error');
+            return;
+        }
+
+        lockButton();
+
+        const btn = document.getElementById('watchAdBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Reklam yüklənir...</span>';
+
+        try {
+            if (typeof show_10290280 === 'function') {
+                show_10290280();
+            }
+        } catch (error) {
+            console.error('Reklam SDK xətası:', error);
+        }
+
+        adWatchTimeout = setTimeout(() => {
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `watch_ad=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server cavabı:', data);
+                
+                if (data.success) {
+                    updateBalance(data.balance_display);
+                    
+                    document.getElementById('adsWatched').textContent = data.ads_watched + '/' + maxDailyAds;
+                    
+                    const progressPercent = (data.ads_watched / maxDailyAds) * 100;
+                    document.getElementById('progressFill').style.width = progressPercent + '%';
+                    
+                    showNotification(data.message, 'success');
+                    
+                    if (data.ads_watched >= maxDailyAds) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-check-circle"></i><span>Günlük Limit Doldu</span>';
+                    }
+                } else {
+                    showNotification(data.message || 'Xəta baş verdi', 'error');
+                }
+                
+                unlockButton();
+            })
+            .catch(error => {
+                showNotification('Bağlantı xətası', 'error');
+                console.error('Xəta:', error);
+                unlockButton();
+            });
+        }, 10000);
+    }
+
+    function navigate(page) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatId = urlParams.get('chatId') || urlParams.get('userId') || urlParams.get('tg_id') || tgId;
+        window.location.href = `${page}?chatId=${chatId}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('İstifadəçi ID:', tgId);
+        
+        document.querySelectorAll('.watch-ad-btn, .nav-item, .logo-icon').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            element.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        });
+    });
+
+    window.addEventListener('beforeunload', function() {
+        if (adWatchTimeout) {
+            clearTimeout(adWatchTimeout);
+        }
+    });
+</script>
+
+</body>
+</html>
