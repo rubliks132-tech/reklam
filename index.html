@@ -2,244 +2,253 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunex App UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lunex Mobil</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Ümumi tənzimləmələr */
+        /* Tam ekran tənzimləmələri */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            background-color: #121212;
+        body, html {
+            height: 100%;
+            background-color: #000000;
             color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            overflow: hidden; /* Skrolu gizlədirik ki, tətbiq kimi görünsün */
         }
 
-        /* Mobil konteyner */
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            height: 90vh;
-            background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
-            position: relative;
-            border-radius: 30px;
-            overflow: hidden;
+        .app-wrapper {
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(180deg, #181818 0%, #000000 100%);
         }
 
-        /* Header hissəsi */
+        /* Header - Üst hissə */
         .header {
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: env(safe-area-inset-top); /* iPhone çentik dəstəyi */
         }
 
-        .logo-area {
+        .logo-section {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .logo-circle {
-            width: 40px;
-            height: 40px;
-            background: #333;
+        .logo-box {
+            width: 45px;
+            height: 45px;
+            background: #222;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #444;
+            border: 1px solid #333;
+            box-shadow: 0 0 15px rgba(255,255,255,0.05);
         }
 
         .logo-text {
-            font-weight: bold;
-            font-size: 20px;
+            font-weight: 800;
+            font-size: 22px;
             letter-spacing: 1px;
         }
 
-        .balance-area {
+        .balance-section {
             text-align: right;
         }
 
         .balance-label {
-            font-size: 10px;
-            color: #888;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .balance-value {
+            font-size: 20px;
+            font-weight: 700;
             display: block;
         }
 
-        .balance-amount {
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        /* Ana kart sahəsi */
-        .main-content {
+        /* Orta sahə */
+        .content {
             flex: 1;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            justify-content: center; /* Elementləri mərkəzə yığır */
+            gap: 25px;
         }
 
-        .welcome-text {
+        .welcome-title {
             text-align: center;
-            font-size: 22px;
-            margin-bottom: 10px;
+            font-size: 26px;
             font-weight: 600;
+            margin-bottom: 10px;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
+        /* Əsas Reklam Kartı */
+        .main-card {
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px 20px;
+            border-radius: 28px;
+            padding: 40px 20px;
             text-align: center;
         }
 
-        .counter {
-            font-size: 42px;
-            font-weight: bold;
+        .counter-big {
+            font-size: 56px;
+            font-weight: 700;
             margin-bottom: 5px;
         }
 
-        .sub-text {
+        .counter-desc {
             color: #aaa;
-            font-size: 13px;
-            margin-bottom: 25px;
+            font-size: 15px;
+            margin-bottom: 35px;
         }
 
-        .btn-watch {
+        .watch-button {
             background-color: #ffffff;
             color: #000000;
             border: none;
-            padding: 15px 40px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 16px;
             width: 100%;
-            cursor: pointer;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: transform 0.2s;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
         }
 
-        .btn-watch:active {
-            transform: scale(0.98);
-        }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.03);
+        /* Qazanc Kartı */
+        .earnings-card {
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 25px;
             text-align: center;
         }
 
-        .info-label {
-            color: #aaa;
-            font-size: 13px;
-            margin-bottom: 8px;
+        .earnings-label {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
 
-        .info-value {
-            font-size: 20px;
-            font-weight: bold;
+        .earnings-value {
+            font-size: 24px;
+            font-weight: 700;
         }
 
-        /* Alt menyu (Tab Bar) */
-        .bottom-nav {
-            background: #1a1a1a;
+        /* Alt Menyu - Tab Bar */
+        .tab-bar {
+            background: #111;
             display: flex;
             justify-content: space-around;
-            padding: 15px 10px;
-            border-top: 1px solid #333;
+            align-items: center;
+            padding: 15px 5px 30px 5px; /* Alt tərəfdə boşluq (iPhone üçün) */
+            border-top: 1px solid #222;
         }
 
-        .nav-item {
+        .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            color: #888;
-            font-size: 11px;
+            gap: 6px;
+            color: #666;
             text-decoration: none;
+            flex: 1;
         }
 
-        .nav-item.active {
-            color: #fff;
+        .tab-item.active {
+            color: #ffffff;
+        }
+
+        .tab-item i {
+            font-size: 22px;
+        }
+
+        .tab-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Aktiv menyu üçün vizual fərq */
+        .active-bg {
             background: rgba(255,255,255,0.1);
-            padding: 8px 15px;
-            border-radius: 15px;
-            margin-top: -8px;
+            padding: 10px 15px;
+            border-radius: 16px;
         }
 
-        .nav-item i {
-            font-size: 20px;
-        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-wrapper">
         <header class="header">
-            <div class="logo-area">
-                <div class="logo-circle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2L1 21h22L12 2zm0 4.5l7.5 13h-15L12 6.5z"/>
+            <div class="logo-section">
+                <div class="logo-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 2L2 20h20L12 2zm0 4l7 12H5l7-12z"/>
                     </svg>
                 </div>
                 <span class="logo-text">LUNEX</span>
             </div>
-            <div class="balance-area">
+            <div class="balance-section">
                 <span class="balance-label">Balansınız</span>
-                <span class="balance-amount">0.3040₼</span>
+                <span class="balance-value">0.3040₼</span>
             </div>
         </header>
 
-        <main class="main-content">
-            <h1 class="welcome-text">Lunex-ə Xoş Gəlmisiniz</h1>
+        <main class="content">
+            <h1 class="welcome-title">Lunex-ə Xoş Gəlmisiniz</h1>
 
-            <div class="card">
-                <div class="counter">0/150</div>
-                <div class="sub-text">Bu Gün İzlənilən Reklamlar</div>
-                <button class="btn-watch">
-                    <i class="fas fa-play-circle"></i> Reklam İzlə
+            <div class="main-card">
+                <div class="counter-big">0/150</div>
+                <p class="counter-desc">Bu Gün İzlənilən Reklamlar</p>
+                
+                <button class="watch-button">
+                    <i class="fas fa-play-circle"></i>
+                    Reklam İzlə
                 </button>
             </div>
 
-            <div class="info-card">
-                <div class="info-label">Hər Reklam Üçün Qazanc</div>
-                <div class="info-value">0.0010₼</div>
+            <div class="earnings-card">
+                <p class="earnings-label">Hər Reklam Üçün Qazanc</p>
+                <p class="earnings-value">0.0010₼</p>
             </div>
         </main>
 
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Ana Səhifə</span>
+        <nav class="tab-bar">
+            <a href="#" class="tab-item active">
+                <div class="active-bg" style="display: flex; flex-direction: column; align-items: center;">
+                    <i class="fas fa-home"></i>
+                    <span>Ana Səhifə</span>
+                </div>
             </a>
-            <a href="#" class="nav-item">
+            <a href="#" class="tab-item">
                 <i class="fas fa-wallet"></i>
                 <span>Çıxarış</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="#" class="tab-item">
                 <i class="fas fa-users"></i>
                 <span>Referans</span>
             </a>
-            <a href="#" class="nav-item">
+            <a href="#" class="tab-item">
                 <i class="fas fa-tasks"></i>
                 <span>Tapşırıqlar</span>
             </a>
