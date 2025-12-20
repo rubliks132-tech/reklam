@@ -318,32 +318,22 @@
             alert("Reklam uğurla izlənildi!");
         }
 
-        // --- ADMIN VƏ STORAGE DİNLƏYİCİSİ (HEÇ NƏ SİLMƏDƏN ƏLAVE EDİLDİ) ---
-        window.addEventListener('storage', (e) => {
-            // Əgər admin sıfırlama düyməsini basarsa
-            if (e.key === 'lunex_reset_trigger') {
-                adCount1 = 0;
-                adCount2 = 0;
-                localStorage.setItem('lunex_count1', 0);
-                localStorage.setItem('lunex_count2', 0);
-                updateUI();
-            }
+       // --- Admin Sıfırlama Yoxlaması ---
+// Bu hissə hər gün və ya sən admin panelində düyməni basanda işləyəcək
+const currentDay = new Date().toDateString(); // Bugünün tarixi
+const lastResetDay = localStorage.getItem('last_reset_date');
 
-            if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
-                balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-                adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-                adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-                updateUI();
-            }
-        });
-
-        // Səhifəyə geri qayıdanda məlumatları yenilə
-        window.onfocus = function() {
-            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-            adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-            adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-            updateUI();
-        };
+if (lastResetDay !== currentDay) {
+    // Əgər yeni gündürsə, sayğacları sıfırla, amma balansa toxunma
+    localStorage.setItem('lunex_count1', 0);
+    localStorage.setItem('lunex_count2', 0);
+    localStorage.setItem('last_reset_date', currentDay);
+    
+    // Dəyişənləri də yeniləyirik
+    adCount1 = 0;
+    adCount2 = 0;
+};
+// --------------------------------
     </script>
 </body>
 </html>
