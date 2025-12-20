@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lunex - Tapşırıqlar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: #f4f4f4;
+            color: #1a1a1a;
+        }
+
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100vw;
+            background: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ff0000;
+            color: white;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-icon i {
+            color: #ff0000;
+            font-size: 20px;
+            margin-left: 3px;
+        }
+
+        .logo-text { font-weight: 800; font-size: 22px; letter-spacing: 1px; }
+        .balance-section { text-align: right; }
+        .balance-label { font-size: 11px; opacity: 0.9; }
+        .balance-value { font-size: 20px; font-weight: 700; }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff0000;
+            margin: 10px 0;
+        }
+
+        /* Task Cards */
+        .task-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .icon-blue { background: #0088cc; }
+        .icon-pink { background: #e91e63; }
+
+        .task-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .task-info p { font-size: 12px; color: #666; line-height: 1.4; }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 12px;
+        }
+
+        .reward {
+            font-weight: 700;
+            color: #ff0000;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .task-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            min-width: 120px;
+        }
+
+        .task-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .task-btn.completed {
+            background: #4CAF50;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 25px 0;
+            border-top: 1px solid #eee;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .tab-item.active { color: #ff0000; }
+        .tab-item i { font-size: 22px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <header class="header">
+            <div class="logo-section">
+                <div class="custom-icon"><i class="fas fa-play"></i></div>
+                <span class="logo-text">LUNEX</span>
+            </div>
+            <div class="balance-section">
+                <span class="balance-label">Balansınız</span>
+                <span id="userBalance" class="balance-value">0.0000₼</span>
+            </div>
+        </header>
+
+        <main class="content">
+            <h1 class="page-title">Tapşırıqlar</h1>
+
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-icon icon-blue"><i class="fab fa-telegram-plane"></i></div>
+                    <div class="task-info">
+                        <h3>Ana Kanala Qoşul</h3>
+                        <p>Rəsmi Lunex kanalına qoşularaq xəbərlərdən xəbərdar ol</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <div class="reward"><i class="fas fa-coins"></i> +0.0200₼</div>
+                    <button id="btnTask1" class="task-btn" onclick="handleTask(1, 'https://t.me/rubliks_website')">Tikla</button>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-icon icon-pink"><i class="fas fa-star"></i></div>
+                    <div class="task-info">
+                        <h3>Sponsor Kanala Qoşul</h3>
+                        <p>Sponsor kanalımıza qoşularaq daha çox imkan əldə et</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <div class="reward"><i class="fas fa-coins"></i> +0.0200₼</div>
+                    <button id="btnTask2" class="task-btn" onclick="handleTask(2, 'https://t.me/papovst')">Tikla</button>
+                </div>
+            </div>
+
+        </main>
+
+        <nav class="tab-bar">
+            <a href="index.html" class="tab-item"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+            <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+            <a href="#" class="tab-item"><i class="fas fa-users"></i><span>Referans</span></a>
+            <a href="tapsiriqlar.html" class="tab-item active"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
+        </nav>
+    </div>
+
+    <script>
+        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+        let task1Status = localStorage.getItem('task_1_completed') === 'true';
+        let task2Status = localStorage.getItem('task_2_completed') === 'true';
+        let isWaiting = false; // Məcburi gözləmə nəzarəti
+
+        function updateUI() {
+            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+            
+            if (task1Status) {
+                const btn1 = document.getElementById('btnTask1');
+                btn1.innerText = "Tamamlandı";
+                btn1.classList.add('completed');
+                btn1.disabled = true;
+            }
+
+            if (task2Status) {
+                const btn2 = document.getElementById('btnTask2');
+                btn2.innerText = "Tamamlandı";
+                btn2.classList.add('completed');
+                btn2.disabled = true;
+            }
+        }
+
+        function handleTask(id, link) {
+            if (isWaiting) {
+                alert("Zəhmət olmasa digər tapşırığın vaxtının bitməsini gözləyin!");
+                return;
+            }
+
+            window.open(link, '_blank');
+            
+            const btn = document.getElementById('btnTask' + id);
+            let timeLeft = 5;
+            isWaiting = true;
+            btn.disabled = true;
+
+            const timer = setInterval(() => {
+                btn.innerText = timeLeft + " san...";
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    isWaiting = false;
+                    completeTask(id);
+                }
+            }, 1000);
+        }
+
+        function completeTask(id) {
+            balance += 0.02;
+            localStorage.setItem('lunex_balance', balance);
+            localStorage.setItem('task_' + id + '_completed', 'true');
+            
+            if (id === 1) task1Status = true;
+            if (id === 2) task2Status = true;
+            
+            updateUI();
+            alert("Təbriklər! 0.0200₼ balansınıza əlavə edildi.");
+        }
+
+        // Səhifə yüklənəndə
+        updateUI();
+
+        // Digər səhifələrdə balans dəyişərsə yenilənməsi üçün
+        window.addEventListener('storage', () => {
+            balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+            updateUI();
+        });
+    </script>
+</body>
+</html>
