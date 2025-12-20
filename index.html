@@ -245,14 +245,12 @@
     <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
     <script>
-        // Məlumatların dərhal yüklənməsi (Sıfır görünməməsi üçün bu hissə ən başda olmalıdır)
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
         let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
         let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
         const maxAds = 25;
         const reward = 0.0010;
 
-        // --- SIFIRLAMA MƏNTİQİ ---
         function checkReset() {
             const currentDay = new Date().toDateString();
             const lastResetDay = localStorage.getItem('lunex_last_reset_day');
@@ -267,7 +265,6 @@
         }
         checkReset(); 
 
-        // Bu funksiya səhifə tam açılan kimi (və ya hər yenilənmədə) işləyir
         function updateUI() {
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
             document.getElementById('count1').innerText = adCount1 + "/25";
@@ -283,7 +280,6 @@
             btn2.innerHTML = (adCount2 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
         }
 
-        // Səhifə yüklənərkən 0 görünməməsi üçün dərhal çağırırıq
         updateUI();
 
         function watchAd(id) {
@@ -320,8 +316,18 @@
             alert("Reklam uğurla izlənildi!");
         }
 
-        // Admin sıfırlamasını dinləmək üçün
+        // --- BURADAN AŞAĞISINI ELAVE ETDİM (HEÇ NƏ SİLMƏDƏN) ---
         window.addEventListener('storage', (e) => {
+            // Admin sifirlama triggeri
+            if (e.key === 'lunex_reset_trigger') {
+                adCount1 = 0;
+                adCount2 = 0;
+                localStorage.setItem('lunex_count1', 0);
+                localStorage.setItem('lunex_count2', 0);
+                updateUI();
+            }
+
+            // Balans və ya sayğac dəyişərsə
             if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
                 balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
                 adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
