@@ -183,7 +183,11 @@
             font-size: 11px;
         }
 
-        .tab-item.active { color: #ff0000; }
+        /* YALNIZ BU HİSSƏ AKTİV OLANDA QIRMIZI YANIR */
+        .tab-item.active { 
+            color: #ff0000; 
+        }
+
         .tab-item i { font-size: 22px; }
     </style>
 </head>
@@ -246,7 +250,7 @@
         let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
         let task1Status = localStorage.getItem('task_1_completed') === 'true';
         let task2Status = localStorage.getItem('task_2_completed') === 'true';
-        let isWaiting = false; // Məcburi gözləmə nəzarəti
+        let isWaiting = false;
 
         function updateUI() {
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
@@ -303,10 +307,8 @@
             alert("Təbriklər! 0.0200₼ balansınıza əlavə edildi.");
         }
 
-        // Səhifə yüklənəndə
         updateUI();
 
-        // Digər səhifələrdə balans dəyişərsə yenilənməsi üçün
         window.addEventListener('storage', () => {
             balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
             updateUI();
