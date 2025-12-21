@@ -1,90 +1,90 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reklam Pay Mini App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; -webkit-tap-highlight-color:transparent; }
-        body, html { height:100%; background:#f4f4f4; color:#1a1a1a; }
-        .app-wrapper { display:flex; flex-direction:column; min-height:100vh; width:100vw; background:#fff; }
-        .header { padding:20px; display:flex; justify-content:space-between; align-items:center; background:#ff0000; color:white; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 12px rgba(255,0,0,0.2); }
-        .logo-section { display:flex; align-items:center; gap:10px; }
-        .custom-icon { width:40px; height:40px; background:white; border-radius:12px; display:flex; justify-content:center; align-items:center; }
-        .custom-icon i { color:#ff0000; font-size:20px; margin-left:3px; }
-        .logo-text { font-weight:800; font-size:22px; letter-spacing:1px; }
-        .balance-section { text-align:right; }
-        .balance-label { font-size:11px; opacity:0.9; }
-        .balance-value { font-size:20px; font-weight:700; }
-        .content { flex:1; padding:20px; display:flex; flex-direction:column; gap:20px; background:#f8f9fa; overflow-y:auto; padding-bottom:100px; }
-        .welcome-title { text-align:center; font-size:24px; font-weight:700; color:#ff0000; margin-top:10px; }
-        .main-card { background:white; border:1px solid #eee; border-radius:25px; padding:30px 20px; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
-        .counter-big { font-size:52px; font-weight:800; color:#1a1a1a; }
-        .counter-desc { color:#666; font-size:15px; margin-bottom:25px; }
-        .watch-button { background-color:#ff0000; color:#fff; border:none; width:100%; padding:18px; border-radius:18px; font-size:18px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:0.3s; }
-        .watch-button:disabled { background-color:#ccc; cursor:not-allowed; }
-        .earnings-card { background:#f1f1f1; border-radius:20px; padding:20px; text-align:center; }
-        .earnings-label { color:#555; font-size:14px; }
-        .earnings-value { font-size:22px; font-weight:700; color:#ff0000; }
-        .tab-bar { background:#fff; display:flex; justify-content:space-around; padding:12px 0 25px 0; border-top:1px solid #eee; position:fixed; bottom:0; width:100%; }
-        .tab-item { display:flex; flex-direction:column; align-items:center; gap:5px; color:#888; text-decoration:none; font-size:11px; }
-        .tab-item.active { color:#ff0000; }
-        .tab-item i { font-size:22px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reklam Pay Mini App</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',-apple-system,sans-serif; -webkit-tap-highlight-color:transparent; }
+body, html { height:100%; background:#f4f4f4; color:#1a1a1a; }
+.app-wrapper { display:flex; flex-direction:column; min-height:100vh; width:100vw; background:#fff; }
+.header { padding:20px; display:flex; justify-content:space-between; align-items:center; background:#ff0000; color:white; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 12px rgba(255,0,0,0.2); }
+.logo-section { display:flex; align-items:center; gap:10px; }
+.custom-icon { width:40px; height:40px; background:white; border-radius:12px; display:flex; justify-content:center; align-items:center; }
+.custom-icon i { color:#ff0000; font-size:20px; margin-left:3px; }
+.logo-text { font-weight:800; font-size:22px; letter-spacing:1px; }
+.balance-section { text-align:right; }
+.balance-label { font-size:11px; opacity:0.9; }
+.balance-value { font-size:20px; font-weight:700; }
+.content { flex:1; padding:20px; display:flex; flex-direction:column; gap:20px; background:#f8f9fa; overflow-y:auto; padding-bottom:100px; }
+.welcome-title { text-align:center; font-size:24px; font-weight:700; color:#ff0000; margin-top:10px; }
+.main-card { background:white; border:1px solid #eee; border-radius:25px; padding:30px 20px; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,0.05); }
+.counter-big { font-size:52px; font-weight:800; color:#1a1a1a; }
+.counter-desc { color:#666; font-size:15px; margin-bottom:25px; }
+.watch-button { background-color:#ff0000; color:#fff; border:none; width:100%; padding:18px; border-radius:18px; font-size:18px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; transition:0.3s; }
+.watch-button:disabled { background-color:#ccc; cursor:not-allowed; }
+.earnings-card { background:#f1f1f1; border-radius:20px; padding:20px; text-align:center; }
+.earnings-label { color:#555; font-size:14px; }
+.earnings-value { font-size:22px; font-weight:700; color:#ff0000; }
+.tab-bar { background:#fff; display:flex; justify-content:space-around; padding:12px 0 25px 0; border-top:1px solid #eee; position:fixed; bottom:0; width:100%; }
+.tab-item { display:flex; flex-direction:column; align-items:center; gap:5px; color:#888; text-decoration:none; font-size:11px; }
+.tab-item.active { color:#ff0000; }
+.tab-item i { font-size:22px; }
+</style>
 </head>
 <body>
 
 <div class="app-wrapper">
-    <header class="header">
-        <div class="logo-section">
-            <div class="custom-icon">
-                <i class="fas fa-play"></i>
-            </div>
-            <span class="logo-text">REKLAM</span>
+<header class="header">
+    <div class="logo-section">
+        <div class="custom-icon">
+            <i class="fas fa-play"></i>
         </div>
-        <div class="balance-section">
-            <span class="balance-label">Balansınız</span>
-            <span id="userBalance" class="balance-value">0.0000₼</span>
-        </div>
-    </header>
+        <span class="logo-text">REKLAM</span>
+    </div>
+    <div class="balance-section">
+        <span class="balance-label">Balansınız</span>
+        <span id="userBalance" class="balance-value">0.0000₼</span>
+    </div>
+</header>
 
-    <main class="content">
-        <h1 class="welcome-title">Reklam Pay-a Xoş Gəlmisiniz</h1>
+<main class="content">
+    <h1 class="welcome-title">Reklam Pay-a Xoş Gəlmisiniz</h1>
 
-        <div class="main-card">
-            <div id="count1" class="counter-big">0/25</div>
-            <p class="counter-desc">Gündəlik Reklam Limiti (1)</p>
-            <button id="btn1" class="watch-button" onclick="watchAd(1)">
-                <i class="fas fa-play-circle"></i> Reklam İzlə
-            </button>
-            <button id="resetBtn1" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(1)">
-                Reklam Sıfırla
-            </button>
-        </div>
+    <div class="main-card">
+        <div id="count1" class="counter-big">0/25</div>
+        <p class="counter-desc">Gündəlik Reklam Limiti (1)</p>
+        <button id="btn1" class="watch-button" onclick="watchAd(1)">
+            <i class="fas fa-play-circle"></i> Reklam İzlə
+        </button>
+        <button id="resetBtn1" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(1)">
+            Reklam Sıfırla
+        </button>
+    </div>
 
-        <div class="main-card"><div id="count2" class="counter-big">0/25</div>
-            <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
-            <button id="btn2" class="watch-button" onclick="watchAd(2)">
-                <i class="fas fa-play-circle"></i> Reklam İzlə
-            </button>
-            <button id="resetBtn2" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(2)">
-                Reklam Sıfırla
-            </button>
-        </div>
+    <div class="main-card">
+        <div id="count2" class="counter-big">0/25</div>
+        <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
+        <button id="btn2" class="watch-button" onclick="watchAd(2)">
+            <i class="fas fa-play-circle"></i> Reklam İzlə
+        </button><button id="resetBtn2" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(2)">
+            Reklam Sıfırla
+        </button>
+    </div>
 
-        <div class="earnings-card">
-            <p class="earnings-label">Hər Reklam Üçün Qazanc</p>
-            <p class="earnings-value">0.0010₼</p>
-        </div>
-    </main>
+    <div class="earnings-card">
+        <p class="earnings-label">Hər Reklam Üçün Qazanc</p>
+        <p class="earnings-value">0.0010₼</p>
+    </div>
+</main>
 
-    <nav class="tab-bar">
-        <a href="index.html" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
-        <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
-        <a href="qutu.html" class="tab-item"><i class="fas fa-box-open"></i><span>Qutu</span></a>
-        <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
-    </nav>
+<nav class="tab-bar">
+    <a href="index.html" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+    <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+    <a href="qutu.html" class="tab-item"><i class="fas fa-box-open"></i><span>Qutu</span></a>
+    <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
+</nav>
 </div>
 
 <script src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
@@ -96,12 +96,12 @@ let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
 let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
 const maxAds = 25;
 const reward = 0.0010;
-const RESET_COOLDOWN = 12 * 60 * 60 * 1000;
+const RESET_COOLDOWN = 12*60*60*1000;
 
-function checkReset() {
+function checkReset(){
     const currentDay = new Date().toDateString();
     const lastResetDay = localStorage.getItem('lunex_last_reset_day');
-    if(lastResetDay !== currentDay){
+    if(lastResetDay!==currentDay){
         localStorage.setItem('lunex_count1',0);
         localStorage.setItem('lunex_count2',0);
         localStorage.setItem('lunex_last_reset_day',currentDay);
@@ -110,20 +110,19 @@ function checkReset() {
 }
 checkReset();
 
-function updateUI() {
-    document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
-    document.getElementById('count1').innerText = adCount1 + "/25";
-    document.getElementById('count2').innerText = adCount2 + "/25";
-
-    document.getElementById('btn1').disabled = adCount1 >= maxAds;
-    document.getElementById('btn2').disabled = adCount2 >= maxAds;
+function updateUI(){
+    document.getElementById('userBalance').innerText = balance.toFixed(4)+"₼";
+    document.getElementById('count1').innerText = adCount1+"/25";
+    document.getElementById('count2').innerText = adCount2+"/25";
+    document.getElementById('btn1').disabled = adCount1>=maxAds;
+    document.getElementById('btn2').disabled = adCount2>=maxAds;
 }
 
 // SDK reklam funksiyası
-function watchAd(id) {
-    const btn1 = document.getElementById('btn1');
-    const btn2 = document.getElementById('btn2');
-    btn1.disabled = true; btn2.disabled = true;
+function watchAd(id){
+    const btn1=document.getElementById('btn1');
+    const btn2=document.getElementById('btn2');
+    btn1.disabled=true; btn2.disabled=true;
 
     if(id===1){
         if(typeof show_10354606==='function'){
@@ -138,10 +137,10 @@ function watchAd(id) {
 
 function processReward(id){
     if(id===1) adCount1++; else adCount2++;
-    balance+=reward;
-    localStorage.setItem('lunex_balance', balance);
-    localStorage.setItem('lunex_count1', adCount1);
-    localStorage.setItem('lunex_count2', adCount2);
+    balance+=reward; // balans toxunulmur reset zamanı
+    localStorage.setItem('lunex_balance',balance);
+    localStorage.setItem('lunex_count1',adCount1);
+    localStorage.setItem('lunex_count2',adCount2);
     updateUI();
     alert("Reklam uğurla izlənildi!");
 }
@@ -149,23 +148,25 @@ function processReward(id){
 // Reklam sıfırlama funksiyası
 function resetAds(id){
     const now = Date.now();
-    localStorage.setItem(`lunex_reset_time_${id}`, now);
+    localStorage.setItem(`lunex_reset_time_${id}`,now);
 
     if(id===1){ adCount1=0; localStorage.setItem('lunex_count1',0); }
     else{ adCount2=0; localStorage.setItem('lunex_count2',0); }
 
     updateUI();
-    startResetTimer(id); // interval başlat
+    startResetTimer(id);
 }
 
 // Geri sayım funksiyası
 function startResetTimer(id){
     const btn = document.getElementById(`resetBtn${id}`);
-    const resetTime = parseInt(localStorage.getItem(`lunex_reset_time_${id}`));
-    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }const interval = setInterval(()=>{
-        const now = Date.now();
-        let diff = RESET_COOLDOWN - (now - resetTime);
-        if(diff <=0 || isNaN(diff)){
+    const resetTime=parseInt(localStorage.getItem(`lunex_reset_time_${id}`));
+    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }
+
+    const interval = setInterval(()=>{
+        const now=Date.now();
+        let diff=RESET_COOLDOWN-(now-resetTime);
+        if(diff<=0||isNaN(diff)){
             clearInterval(interval);
             localStorage.removeItem(`lunex_reset_time_${id}`);
             btn.disabled=false;
@@ -173,22 +174,22 @@ function startResetTimer(id){
             return;
         }
         btn.disabled=true;
-        btn.innerText = formatTime(diff);
-    }, 1000);
+        btn.innerText=formatTime(diff);
+    },1000);
 }
 
 function formatTime(ms){
-    let totalSeconds = Math.floor(ms/1000);
-    let h = Math.floor(totalSeconds / 3600);
-    let m = Math.floor((totalSeconds % 3600) / 60);
-    let s = totalSeconds % 60;
-    h = h.toString().padStart(2,'0');
-    m = m.toString().padStart(2,'0');
-    s = s.toString().padStart(2,'0');
-    return h + ":" + m + ":" + s;
+    let totalSeconds=Math.floor(ms/1000);
+    let h=Math.floor(totalSeconds/3600);
+    let m=Math.floor((totalSeconds%3600)/60);
+    let s=totalSeconds%60;
+    h=h.toString().padStart(2,'0');
+    m=m.toString().padStart(2,'0');
+    s=s.toString().padStart(2,'0');
+    return h+":"+m+":"+s;
 }
 
-// səhifə açıldıqda timerləri yoxla
+// səhifə açıldıqda intervali yoxla
 startResetTimer(1);
 startResetTimer(2);
 
