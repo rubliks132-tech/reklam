@@ -155,17 +155,17 @@ function resetAds(id){
     else{ adCount2=0; localStorage.setItem('lunex_count2',0); }
 
     updateUI();
-    startResetTimer(id);
+    startResetTimer(id); // interval başlat
 }
 
+// Geri sayım funksiyası
 function startResetTimer(id){
     const btn = document.getElementById(`resetBtn${id}`);
     const resetTime = parseInt(localStorage.getItem(`lunex_reset_time_${id}`));
-    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }
-
-    const interval = setInterval(()=>{
-        const now = Date.now();let diff = RESET_COOLDOWN-(now-resetTime);
-        if(diff<=0||isNaN(diff)){
+    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }const interval = setInterval(()=>{
+        const now = Date.now();
+        let diff = RESET_COOLDOWN - (now - resetTime);
+        if(diff <=0 || isNaN(diff)){
             clearInterval(interval);
             localStorage.removeItem(`lunex_reset_time_${id}`);
             btn.disabled=false;
@@ -174,7 +174,7 @@ function startResetTimer(id){
         }
         btn.disabled=true;
         btn.innerText = formatTime(diff);
-    },1000);
+    }, 1000);
 }
 
 function formatTime(ms){
@@ -185,10 +185,10 @@ function formatTime(ms){
     h = h.toString().padStart(2,'0');
     m = m.toString().padStart(2,'0');
     s = s.toString().padStart(2,'0');
-    return h + ":" + m + ":" + s; // ${h}:${m}:${s} problemini aradan qaldırır
+    return h + ":" + m + ":" + s;
 }
 
-// Səhifə açıldıqda timerləri yoxla
+// səhifə açıldıqda timerləri yoxla
 startResetTimer(1);
 startResetTimer(2);
 
