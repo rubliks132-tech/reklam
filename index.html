@@ -291,14 +291,14 @@
             if(id === 1) {
                 if(adCount1 >= maxAds) { alert("1-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
                 if (typeof show_10354606 === 'function') {
-                    show_10354606().then(() => { processReward(1); });
+                    show_10354606().then(() => { processReward(1); }).catch(() => { updateUI(); });
                 } else {
                     setTimeout(() => { processReward(1); }, 1000); 
                 }
             } else {
                 if(adCount2 >= maxAds) { alert("2-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
                 if (typeof show_10354610 === 'function') {
-                    show_10354610().then(() => { processReward(2); });
+                    show_10354610().then(() => { processReward(2); }).catch(() => { updateUI(); });
                 } else {
                     setTimeout(() => { processReward(2); }, 1000);
                 }
@@ -315,26 +315,6 @@
             updateUI();
             alert("Reklam uğurla izlənildi!");
         }
-
-        // --- BURADAN AŞAĞISINI ELAVE ETDİM (HEÇ NƏ SİLMƏDƏN) ---
-        window.addEventListener('storage', (e) => {
-            // Admin sifirlama triggeri
-            if (e.key === 'lunex_reset_trigger') {
-                adCount1 = 0;
-                adCount2 = 0;
-                localStorage.setItem('lunex_count1', 0);
-                localStorage.setItem('lunex_count2', 0);
-                updateUI();
-            }
-
-            // Balans və ya sayğac dəyişərsə
-            if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
-                balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-                adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-                adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-                updateUI();
-            }
-        });
     </script>
 </body>
 </html>
