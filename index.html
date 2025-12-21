@@ -164,8 +164,7 @@
 
         .tab-bar {
             background: #ffffff;
-            display: flex;
-            justify-content: space-around;
+            display: flex;justify-content: space-around;
             padding: 12px 0 25px 0;
             border-top: 1px solid #eee;
             position: fixed;
@@ -194,147 +193,109 @@
 </head>
 <body>
 
-    <div class="app-wrapper">
-        <header class="header">
-            <div class="logo-section">
-                <div class="custom-icon">
-                    <i class="fas fa-play"></i>
-                </div>
-                <span class="logo-text">REKLAM</span>
+<div class="app-wrapper">
+    <header class="header">
+        <div class="logo-section">
+            <div class="custom-icon">
+                <i class="fas fa-play"></i>
             </div>
-            <div class="balance-section">
-                <span class="balance-label">Balansınız</span>
-                <span id="userBalance" class="balance-value">0.0000₼</span>
-            </div>
-        </header>
+            <span class="logo-text">REKLAM</span>
+        </div>
+        <div class="balance-section">
+            <span class="balance-label">Balansınız</span>
+            <span id="userBalance" class="balance-value">0.0000₼</span>
+        </div>
+    </header>
 
-        <main class="content">
-            <h1 class="welcome-title">Reklam Pay-a Xoş Gəlmisiniz</h1>
+    <main class="content">
+        <h1 class="welcome-title">Reklam Pay-a Xoş Gəlmisiniz</h1>
 
-            <div class="main-card">
-                <div id="count1" class="counter-big">0/25</div>
-                <p class="counter-desc">Gündəlik Reklam Limiti (1)</p>
-                <button id="btn1" class="watch-button" onclick="watchAd(1)">
-                    <i class="fas fa-play-circle"></i> Reklam İzlə
-                </button>
-            </div>
+        <div class="main-card">
+            <div id="count1" class="counter-big">0/25</div>
+            <p class="counter-desc">Gündəlik Reklam Limiti (1)</p>
+            <button id="btn1" class="watch-button" onclick="watchAd(1)">
+                <i class="fas fa-play-circle"></i> Reklam İzlə
+            </button>
+        </div>
 
-            <div class="main-card">
-                <div id="count2" class="counter-big">0/25</div>
-                <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
-                <button id="btn2" class="watch-button" onclick="watchAd(2)">
-                    <i class="fas fa-play-circle"></i> Reklam İzlə
-                </button>
-            </div>
+        <div class="main-card">
+            <div id="count2" class="counter-big">0/25</div>
+            <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
+            <button id="btn2" class="watch-button" onclick="watchAd(2)">
+                <i class="fas fa-play-circle"></i> Reklam İzlə
+            </button>
+        </div>
 
-            <div class="earnings-card">
-                <p class="earnings-label">Hər Reklam Üçün Qazanc</p>
-                <p class="earnings-value">0.0010₼</p>
-            </div>
-        </main>
+        <div class="earnings-card">
+            <p class="earnings-label">Hər Reklam Üçün Qazanc</p>
+            <p class="earnings-value">0.0010₼</p>
+        </div>
+    </main>
 
-        <nav class="tab-bar">
-            <a href="index.html" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
-            <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
-            <a href="qutu.html" class="tab-item"><i class="fas fa-box-open"></i><span>Qutu</span></a>
-            <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
-        </nav>
-    </div>
+    <nav class="tab-bar">
+        <a href="index.html" class="tab-item active"><i class="fas fa-home"></i><span>Ana Səhifə</span></a>
+        <a href="cixaris.html" class="tab-item"><i class="fas fa-wallet"></i><span>Çıxarış</span></a>
+        <a href="qutu.html" class="tab-item"><i class="fas fa-box-open"></i><span>Qutu</span></a>
+        <a href="tapsiriqlar.html" class="tab-item"><i class="fas fa-tasks"></i><span>Tapşırıqlar</span></a>
+    </nav>
+</div>
 
-    <script src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
-    <script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
+<script src='//libtl.com/sdk.js' data-zone='10354606' data-sdk='show_10354606' async></script>
+<script src='//libtl.com/sdk.js' data-zone='10354610' data-sdk='show_10354610' async></script>
 
-    <script>
-        let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-        let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-        let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-        const maxAds = 25;
-        const reward = 0.0010;
+<script>
+let balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+const maxAds = 25;
+const reward = 0.0010;
 
-        function checkReset() {
-            const currentDay = new Date().toDateString();
-            const lastResetDay = localStorage.getItem('lunex_last_reset_day');
-            
-            if (lastResetDay !== currentDay) {
-                localStorage.setItem('lunex_count1', 0);
-                localStorage.setItem('lunex_count2', 0);
-                localStorage.setItem('lunex_last_reset_day', currentDay);
-                adCount1 = 0;
-                adCount2 = 0;
-            }
-        }
-        checkReset(); 
+function checkReset() {
+    const currentDay = new Date().toDateString();
+    const lastResetDay = localStorage.getItem('lunex_last_reset_day');
+    if (lastResetDay !== currentDay) {
+        localStorage.setItem('lunex_count1', 0);
+        localStorage.setItem('lunex_count2', 0);
+        localStorage.setItem('lunex_last_reset_day', currentDay);
+        adCount1 = 0;
+        adCount2 = 0;
+    }
+}
+checkReset();
 
-        function updateUI() {
-            document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
-            document.getElementById('count1').innerText = adCount1 + "/25";
-            document.getElementById('count2').innerText = adCount2 + "/25";
+function updateUI() {
+    document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
+    document.getElementById('count1').innerText = adCount1 + "/25";
+    document.getElementById('count2').innerText = adCount2 + "/25";
 
-            const btn1 = document.getElementById('btn1');
-            const btn2 = document.getElementById('btn2');
+    btn1.disabled = adCount1 >= maxAds;
+    btn2.disabled = adCount2 >= maxAds;
+}
+updateUI();
 
-            btn1.disabled = (adCount1 >= maxAds);
-            btn2.disabled = (adCount2 >= maxAds);
-            
-            btn1.innerHTML = (adCount1 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
-            btn2.innerHTML = (adCount2 >= maxAds) ? "Limit Doldu" : '<i class="fas fa-play-circle"></i> Reklam İzlə';
-        }
+function watchAd(id) {
+    btn1.disabled = true;
+    btn2.disabled = true;
+    setTimeout(() => processReward(id), 1000);
+}
 
-        updateUI();
+function processReward(id) {
+    if (id === 1) adCount1++;
+    else adCount2++;
+    balance += reward;
+    localStorage.setItem('lunex_balance', balance);
+    localStorage.setItem('lunex_count1', adCount1);
+    localStorage.setItem('lunex_count2', adCount2);
+    updateUI();
+    alert("Reklam uğurla izlənildi!");}
 
-        function watchAd(id) {
-            const btn1 = document.getElementById('btn1');
-            const btn2 = document.getElementById('btn2');
-            btn1.disabled = true;
-            btn2.disabled = true;
+window.addEventListener('storage', () => {
+    balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
+    adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
+    adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
+    updateUI();
+});
+</script>
 
-            if(id === 1) {
-                if(adCount1 >= maxAds) { alert("1-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
-                if (typeof show_10354606 === 'function') {
-                    show_10354606().then(() => { processReward(1); });
-                } else {
-                    setTimeout(() => { processReward(1); }, 1000); 
-                }
-            } else {
-                if(adCount2 >= maxAds) { alert("2-ci reklam üçün gündəlik limit doldu!"); updateUI(); return; }
-                if (typeof show_10354610 === 'function') {
-                    show_10354610().then(() => { processReward(2); });
-                } else {
-                    setTimeout(() => { processReward(2); }, 1000);
-                }
-            }
-        }
-
-        function processReward(id) {
-            if(id === 1) adCount1++;
-            else adCount2++;
-            balance += reward;
-            localStorage.setItem('lunex_balance', balance);
-            localStorage.setItem('lunex_count1', adCount1);
-            localStorage.setItem('lunex_count2', adCount2);
-            updateUI();
-            alert("Reklam uğurla izlənildi!");
-        }
-
-        // --- BURADAN AŞAĞISINI ELAVE ETDİM (HEÇ NƏ SİLMƏDƏN) ---
-        window.addEventListener('storage', (e) => {
-            // Admin sifirlama triggeri
-            if (e.key === 'lunex_reset_trigger') {
-                adCount1 = 0;
-                adCount2 = 0;
-                localStorage.setItem('lunex_count1', 0);
-                localStorage.setItem('lunex_count2', 0);
-                updateUI();
-            }
-
-            // Balans və ya sayğac dəyişərsə
-            if (e.key === 'lunex_count1' || e.key === 'lunex_count2' || e.key === 'lunex_balance') {
-                balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
-                adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
-                adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
-                updateUI();
-            }
-        });
-    </script>
 </body>
 </html>
