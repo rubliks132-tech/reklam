@@ -163,8 +163,7 @@
         }
 
         .tab-bar {
-            background: #ffffff;
-            display: flex;justify-content: space-around;
+            background: #ffffff;display: flex;justify-content: space-around;
             padding: 12px 0 25px 0;
             border-top: 1px solid #eee;
             position: fixed;
@@ -216,6 +215,10 @@
             <button id="btn1" class="watch-button" onclick="watchAd(1)">
                 <i class="fas fa-play-circle"></i> Reklam İzlə
             </button>
+            <!-- Əlavə: Reset düyməsi -->
+            <button id="resetBtn1" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(1)">
+                Reklam Sıfırla
+            </button>
         </div>
 
         <div class="main-card">
@@ -223,6 +226,10 @@
             <p class="counter-desc">Gündəlik Reklam Limiti (2)</p>
             <button id="btn2" class="watch-button" onclick="watchAd(2)">
                 <i class="fas fa-play-circle"></i> Reklam İzlə
+            </button>
+            <!-- Əlavə: Reset düyməsi -->
+            <button id="resetBtn2" class="watch-button" style="margin-top:12px;background:#333;" onclick="resetAds(2)">
+                Reklam Sıfırla
             </button>
         </div>
 
@@ -249,6 +256,7 @@ let adCount1 = parseInt(localStorage.getItem('lunex_count1')) || 0;
 let adCount2 = parseInt(localStorage.getItem('lunex_count2')) || 0;
 const maxAds = 25;
 const reward = 0.0010;
+const RESET_COOLDOWN = 12 * 60 * 60 * 1000; // 12 saat
 
 function checkReset() {
     const currentDay = new Date().toDateString();
@@ -268,14 +276,20 @@ function updateUI() {
     document.getElementById('count1').innerText = adCount1 + "/25";
     document.getElementById('count2').innerText = adCount2 + "/25";
 
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
     btn1.disabled = adCount1 >= maxAds;
     btn2.disabled = adCount2 >= maxAds;
 }
+
 updateUI();
 
 function watchAd(id) {
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
     btn1.disabled = true;
     btn2.disabled = true;
+
     setTimeout(() => processReward(id), 1000);
 }
 
@@ -287,7 +301,65 @@ function processReward(id) {
     localStorage.setItem('lunex_count1', adCount1);
     localStorage.setItem('lunex_count2', adCount2);
     updateUI();
-    alert("Reklam uğurla izlənildi!");}
+    alert("Reklam uğurla izlənildi!");
+}
+
+// ==== Əlavə: Reset funksiyası ====
+function resetAds(id) {
+    const now = Date.now();
+    localStorage.setItem(`lunex_reset_time_${id}`, now);
+
+    if (id === 1) {
+        adCount1 = 0;
+        localStorage.setItem('lunex_count1', 0);
+    } else {
+        adCount2 = 0;
+        localStorage.setItem('lunex_count2', 0);
+    }
+
+    updateUI();
+    startResetTimer(id);
+}
+
+function startResetTimer(id) {
+    const btn = document.getElementById(`resetBtn${id}`);
+    const resetTime = parseInt(localStorage.getItem(`lunex_reset_time_${id}`));
+    if (!resetTime) return;
+
+    const interval = setInterval(() => {
+        const now = Date.now();
+        const diff = RESET_COOLDOWN - (now - resetTime);
+
+        if (diff <= 0) {
+            clearInterval(interval);
+            localStorage.removeItem(`lunex_reset_time_${id}`);
+            btn.disabled = false;
+            btn.innerText = "Reklam Sıfırla";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = formatTime(diff);
+    }, 1000);
+}
+
+// Etibarlı formatTime funksiyası
+function formatTime(ms) {
+    let totalSeconds = Math.floor(ms / 1000);
+    let h = Math.floor(totalSeconds / 3600);
+    let m = Math.floor((totalSeconds % 3600) / 60);
+    let s = totalSeconds % 60;
+
+    h = (h < 10 ? "0" : "") + h;
+    m = (m < 10 ? "0" : "") + m;
+    s = (s < 10 ? "0" : "") + s;
+
+    return '${h}:${m}:${s}';
+}
+
+// Səhifə açıldıqda timerləri yoxla
+startResetTimer(1);
+startResetTimer(2);
 
 window.addEventListener('storage', () => {
     balance = parseFloat(localStorage.getItem('lunex_balance')) || 0.0;
