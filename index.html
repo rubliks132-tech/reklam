@@ -115,12 +115,9 @@ function updateUI() {
     document.getElementById('count1').innerText = adCount1 + "/25";
     document.getElementById('count2').innerText = adCount2 + "/25";
 
-    const btn1 = document.getElementById('btn1');
-    const btn2 = document.getElementById('btn2');
-    btn1.disabled = adCount1 >= maxAds;
-    btn2.disabled = adCount2 >= maxAds;
+    document.getElementById('btn1').disabled = adCount1 >= maxAds;
+    document.getElementById('btn2').disabled = adCount2 >= maxAds;
 }
-updateUI();
 
 // SDK reklam funksiyası
 function watchAd(id) {
@@ -164,9 +161,10 @@ function resetAds(id){
 function startResetTimer(id){
     const btn = document.getElementById(`resetBtn${id}`);
     const resetTime = parseInt(localStorage.getItem(`lunex_reset_time_${id}`));
-    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }const interval = setInterval(()=>{
-        const now = Date.now();
-        let diff = RESET_COOLDOWN-(now-resetTime);
+    if(!resetTime){ btn.disabled=false; btn.innerText="Reklam Sıfırla"; return; }
+
+    const interval = setInterval(()=>{
+        const now = Date.now();let diff = RESET_COOLDOWN-(now-resetTime);
         if(diff<=0||isNaN(diff)){
             clearInterval(interval);
             localStorage.removeItem(`lunex_reset_time_${id}`);
@@ -175,22 +173,22 @@ function startResetTimer(id){
             return;
         }
         btn.disabled=true;
-        btn.innerText=formatTime(diff);
+        btn.innerText = formatTime(diff);
     },1000);
 }
 
 function formatTime(ms){
-    let totalSeconds=Math.floor(ms/1000);
-    let h=Math.floor(totalSeconds/3600);
-    let m=Math.floor((totalSeconds%3600)/60);
-    let s=totalSeconds%60;
-    h=(h<10?"0":"")+h;
-    m=(m<10?"0":"")+m;
-    s=(s<10?"0":"")+s;
-    return '${h}:${m}:${s}';
+    let totalSeconds = Math.floor(ms/1000);
+    let h = Math.floor(totalSeconds / 3600);
+    let m = Math.floor((totalSeconds % 3600) / 60);
+    let s = totalSeconds % 60;
+    h = h.toString().padStart(2,'0');
+    m = m.toString().padStart(2,'0');
+    s = s.toString().padStart(2,'0');
+    return h + ":" + m + ":" + s; // ${h}:${m}:${s} problemini aradan qaldırır
 }
 
-// Timerləri səhifə açıldıqda işə sal
+// Səhifə açıldıqda timerləri yoxla
 startResetTimer(1);
 startResetTimer(2);
 
