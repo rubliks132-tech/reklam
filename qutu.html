@@ -21,7 +21,7 @@
             height: 100%;
             background-color: #f4f4f4;
             color: #1a1a1a;
-            overflow: hidden; /* Səhifənin sürüşməməsi üçün */
+            overflow-x: hidden;
         }
 
         .app-wrapper {
@@ -32,7 +32,7 @@
             background: #ffffff;
         }
 
-        /* HEADER - index.html ilə tam eyni */
+        /* HEADER */
         .header {
             padding: 20px;
             display: flex;
@@ -87,7 +87,7 @@
             font-weight: 700;
         }
 
-        /* CONTENT - Qutu mərkəzdə */
+        /* CONTENT */
         .content {
             flex: 1;
             padding: 20px;
@@ -97,7 +97,7 @@
             justify-content: center;
             background-color: #f8f9fa;
             gap: 20px;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
         }
 
         .limit-badge {
@@ -161,7 +161,28 @@
             cursor: not-allowed;
         }
 
-        /* Ehtimallar Siyahısı */
+        /* YENİ SIFIRLA BUTONU STİLİ */
+        .reset-btn {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: -10px;
+        }
+
+        .reset-btn:disabled {
+            background-color: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+        }
+
         .info-card {
             background: white;
             border: 1px solid #eee;
@@ -175,7 +196,6 @@
         }
 
         .info-card div { margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .info-card div:last-child { border: none; margin: 0; }
         .info-card b { color: #ff0000; display: block; margin-bottom: 2px; }
 
         /* MODAL */
@@ -245,6 +265,8 @@
             </div>
 
             <button id="giftBtn" class="open-btn" onclick="startProcess()">QUTUNU AÇ</button>
+            
+            <button id="resetBoxBtn" class="reset-btn" onclick="resetBoxLimit()">Limit Sıfırla</button>
 
             <div class="info-card">
                 <div><b>100%de 70% çıxa bilər:</b> 0.001 ; 0.0005 ; 0.002 ; 0.0009</div>
@@ -273,22 +295,57 @@
         let limit = parseInt(localStorage.getItem('box_limit_today')) || 0;
         const maxLimit = 20;
         const rewards = [0.001, 0.0005, 0.002, 0.0009];
+        const cooldownTime = 12 * 60 * 60 * 1000; // 12 saat
 
         function updateUI() {
             document.getElementById('userBalance').innerText = balance.toFixed(4) + "₼";
             document.getElementById('limitLabel').innerText = "Limit: " + limit + " / " + maxLimit;
+            
+            const btn = document.getElementById('giftBtn');
             if (limit >= maxLimit) {
-                const btn = document.getElementById('giftBtn');
                 btn.disabled = true;
                 btn.innerText = "Limit Dolub";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "QUTUNU AÇ";
             }
+            checkResetTimer();
+        }
+
+        // Sıfırlama butonu üçün geri sayım məntiqi
+        function checkResetTimer() {
+            const now = Date.now();
+            const resetBtn = document.getElementById('resetBoxBtn');
+            const lastReset = parseInt(localStorage.getItem('box_reset_cooldown')) || 0;
+            const remaining = (lastReset + cooldownTime) - now;
+
+            if (remaining > 0) {
+                resetBtn.disabled = true;
+                const hours = Math.floor(remaining / 3600000);
+                const mins = Math.floor((remaining % 3600000) / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                resetBtn.innerText = `Sıfırlama: ${hours}s ${mins}d ${secs}s`;
+            } else {
+                resetBtn.disabled = false;
+                resetBtn.innerText = "Limit Sıfırla";
+            }
+        }
+
+        // Hər saniyə taymeri yenilə
+        setInterval(checkResetTimer, 1000);
+
+        function resetBoxLimit() {
+            limit = 0;
+            localStorage.setItem('box_limit_today', 0);
+            localStorage.setItem('box_reset_cooldown', Date.now());
+            updateUI();
+            alert("Qutu limiti sıfırlandı! Yenidən aça bilərsiniz.");
         }
 
         function startProcess() {
             if (limit >= maxLimit) return;
             document.getElementById('giftBtn').disabled = true;
 
-            // SDK Çağırılır
             if (typeof show_10354794 === 'function') {
                 show_10354794().then(() => countdown()).catch(() => countdown());
             } else {
@@ -332,7 +389,7 @@
 
         function closeModal() {
             document.getElementById('rewardModal').style.display = 'none';
-            if (limit < maxLimit) document.getElementById('giftBtn').disabled = false;
+            updateUI();
         }
 
         updateUI();
